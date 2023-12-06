@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <version>1.1.0</version>
+    <settings>
+        <!-- parseOffers defines the general parsing logic
+        possible values: 0, 1
+        If 1 - first scrapes product offer page
+        -->
+        <parseOffers>0</parseOffers>
+        <!-- storeOffersData
+        possible values: 0, 1
+        If 1 - all offers are stored to the product table.
+        -->
+        <storeOffersData>0</storeOffersData>
+        <!-- processOnlyOffers
+        possible values: 0, 1
+        If 1 - only offers are parsed (parser do not get detailed page parsed), note, for this mode storeOffersData and parseOffers should be set to 1.
+        -->
+        <processOnlyOffers>0</processOnlyOffers>
+        <!--
+        maximum number of threads. i.e. how many products are going to be synced at the same time. Integer.
+        -->
+        <activeConnections>130</activeConnections>
+        <!--
+        How many products to sync per a cron run. Depends on the server settings, the more products  to sync in one thread, the longer process takes and consumes a little bit more memory. Integer
+        -->
+        <productSyncLimit>150</productSyncLimit>
+
+        <!--
+        When magento requests are sent, the process is created and updated every request. This delay in seconds indicate how fast to treat the process to become inactive (i.e. it might hang because of the error)
+        -->
+        <processExpireDelay>800</processExpireDelay>
+
+        <!--
+        How many magento requests to process per a cron run.
+        -->
+        <magentoProductSyncLimit>200</magentoProductSyncLimit>
+
+        <!--
+        When magento requests are sent, the process is created and updated every request. This delay in seconds indicate how fast to treat the process to become inactive (i.e. it might hang because of the error)
+        -->
+        <magentoProcessExpireDelay>240</magentoProcessExpireDelay>
+
+        <!-- productPerPage - base per page qty on the products page. Integer. -->
+        <productPerPage>100</productPerPage>
+        <!-- productSyncDelay - general period in seconds which during which the product is treated as up to date. I.e. if the product is just synced, it is going to be treated as up to day for productSyncDelay from now. Integer -->
+        <productSyncDelay><![CDATA[30000]]></productSyncDelay>
+        <!-- syncSpeedDelayLimit - the maximum value of the sync_speed attribute. sync_speed attribute in a product table defines the multiplier for the productSyncDelay, i.e. If product is synced and no price/stock were changed, it's sync_speed attribute is increased by 1, the next time it will be synced after productSyncDelay * sync_speed. Using this feature we do not waste resources on syncing products which price/stock are unlikely to change  -->
+        <syncSpeedDelayLimit>50</syncSpeedDelayLimit>
+        <!-- syncSpeedDelayToDeleteTrigger a value to which sync_speed should rise up after flat toDelete in the product table will be changed to 1 if the product stock is zero. i.e. Zero stock products which never get positive stock will eventually get toDelete attribute equal to 1, and can be removed from the database -->
+        <syncSpeedDelayToDeleteTrigger>20</syncSpeedDelayToDeleteTrigger>
+        <!-- magentoControlUrl - url to trigger magento store if any. It is used to synchronize stock/price/product list with magento -->
+        <magentoControlUrl></magentoControlUrl>
+        <!-- magentoControlPass - security string, it is checked on a magento side -->
+        <magentoControlPass></magentoControlPass>
+        <!-- magentoCreateProductOnMissing - if set to 1, will send product create signal to magento in case if the product is not in the magento database -->
+        <magentoCreateProductOnMissing>0</magentoCreateProductOnMissing>
+        <!-- magentoDeleteProductOnNotSyncable - if set to 1, will send product delete signal to magento when the product is removed from parser or changed sync_status no any not equal to Active -->
+        <magentoDeleteProductOnNotSyncable>0</magentoDeleteProductOnNotSyncable>
+        <!-- magentoDeleteProductOnZeroPrice - if set to 1, will send product delete signal to magento when the product gets zero price, it will be restored in magento when price gets positive -->
+        <magentoDeleteProductOnZeroPrice>1</magentoDeleteProductOnZeroPrice>
+        <!-- logger enables specific event logging -->
+        <logger>0</logger>
+        <!--proxyZeroResponsePercentBan - if percent of curl_code=0 gets above this value, the proxy will be disabled for an hour -->
+        <proxyZeroResponsePercentBan>90</proxyZeroResponsePercentBan>
+        <!--proxy200ResponsePercentBan - if percent of curl_code=200 gets below this value, the proxy will be disabled for an hour -->
+        <proxy200ResponsePercentBan>5</proxy200ResponsePercentBan>
+
+        <!-- the number of seconds for which the banned proxy should remain banned-->
+        <proxyBanDelay>1200</proxyBanDelay>
+
+        <!-- productKeepStockOnProxyFail - if proxy fails to get product content page, we can keep or drop stock to zero, default is to drop stock to zero -->
+        <productKeepStockOnProxyFail>0</productKeepStockOnProxyFail>
+        <!-- for variation products - update title with it's variations, default is 1-->
+        <addVariationAttributeToTitle>1</addVariationAttributeToTitle>
+        <!-- blacklisting options -->
+        <blacklistByAddon>0</blacklistByAddon>
+        <blacklistByDimmension>0</blacklistByDimmension>
+        <blacklistByDelivery>0</blacklistByDelivery>
+        <!-- the location of generated csv files with product data -->
+        <csvFile>public/downloads/product-data-{date}.csv</csvFile>
+        <!-- always get product page in order to update description fields -->
+        <forceDescriptionReload>0</forceDescriptionReload>
+        <maxRetries>5</maxRetries>
+        <maxProxyRetries>10</maxProxyRetries>
+    </settings>
+
+    <!-- settings for centric api service -->
+    <centric>
+        <!-- enabled 1 or no 0 -->
+        <enabled>0</enabled>
+        <!-- api key to use with centric api service in order to get ean,upc data -->
+        <centricApiKey>YQktUuxdBKhkeKbrYA6w5rb3AxzJuDIb1CQOgBomon4lMOYzfeXxXrhs1dP9</centricApiKey>
+        <!-- number of products to process every run -->
+        <centricProcessLimit>400</centricProcessLimit>
+        <!-- a list of campaign ids separated by comma-->
+        <centricCampaigns>
+            <it>19083</it>
+        </centricCampaigns>
+        <requestDataAdditionalOptions>
+            <product_status>all</product_status>
+            <retrieve_other_identifiers>1</retrieve_other_identifiers>
+        </requestDataAdditionalOptions>
+        <requestFields><![CDATA[asin, upc, ean, mpn, title, features, size, model, brand, manufacturer,package_dimensions_height, package_dimensions_length,package_dimensions_weight, package_dimensions_width,item_dimensions_height, item_dimensions_length, item_dimensions_weight, item_dimensions_width, ean_list, upc_list
+        ]]></requestFields>
+    </centric>
+    <!-- initial proxy configurations which may be populated to the database by triggering this url:
+    [ProjectUrl]/parser/proxyconfig -->
+    <proxies>
+        <proxy>
+            <ip>45.77.88.119</ip>
+            <port>3128</port>
+            <max_usage_limit>5</max_usage_limit>
+        </proxy>
+        <proxy>
+            <ip>195.154.77.130</ip>
+            <port>3128</port>
+        </proxy>
+    </proxies>
+    <!-- captcha solving settings, two captcha solving providers are supported: deathbycaptcha or captchasulutions -->
+    <captcha>
+        <deathbycaptcha>
+            <login></login>
+            <password></password>
+        </deathbycaptcha>
+        <captchasolutions>
+            <login></login>
+            <password></password>
+        </captchasolutions>
+        <solve_captcha>0</solve_captcha>
+        <captcha_service>captchasolutions</captcha_service>
+        <data_dir>/data/parser/Captcha</data_dir>
+    </captcha>
+    <!-- active locales, if you use one specific locale, feel free to remove others from this list. In order to activate new locale, certain locale specific config files should be generated into /data/parser/Config/Profile and  /data/parser/Config/Crawler folders -->
+    <locales>
+        <locale>
+            <id>com</id>
+            <url>amazon.com</url>
+        </locale>
+        <locale>
+            <id>fr</id>
+            <url>amazon.fr</url>
+        </locale>
+        <locale>
+            <id>uk</id>
+            <url>amazon.co.uk</url>
+        </locale>
+        <locale>
+            <id>ca</id>
+            <url>amazon.ca</url>
+        </locale>
+        <locale>
+            <id>de</id>
+            <url>amazon.de</url>
+        </locale>
+        <locale>
+            <id>es</id>
+            <url>amazon.es</url>
+        </locale>
+        <locale>
+            <id>it</id>
+            <url>amazon.it</url>
+        </locale>
+        <locale>
+            <id>jp</id>
+            <url>amazon.jp</url>
+        </locale>
+        <locale>
+            <id>in</id>
+            <url>amazon.in</url>
+        </locale>
+    </locales>
+    <!-- ping request settings are used to configure magento Ping request options
+    <attributeToUpdate>
+        <parserCode>magentoCode</parserCode>
+    </attributeToUpdate>
+    -->
+    <pingRequest>
+        <attributesToUpdate>
+            <description>description</description>
+            <short_description>short_description</short_description>
+            <made_by>manufacturer</made_by>
+            <category>category</category>
+            <images>images</images>
+        </attributesToUpdate>
+        <checkM2EProErrors>0</checkM2EProErrors>
+    </pingRequest>
+    <!-- This one is some nasty magic, fields will be appear in the proper form, and will be processed to the products table, note, fields has to be added to the table and properly processed in the product add function -->
+    <!--customFields>
+        <UploadForm>
+            <marketplace_category>
+                <name>Marketplace Category</name>
+            </marketplace_category>
+            <web_hierarchy_location_codes>
+                <name>Web Hierarchy Location Codes</name>
+            </web_hierarchy_location_codes>
+        </UploadForm>
+    </customFields-->
+
+    <proxySources>
+        <!-- default source describes manually added proxy items -->
+        <default>
+            <enabled>1</enabled>
+            <type>default</type>
+            <maxUsageLimit>3</maxUsageLimit>
+            <disableStrategy>default</disableStrategy>
+        </default>
+        <!-- proxies extracted from proxyscraper api -->
+        <scraperPrem>
+            <enabled>0</enabled>
+            <type>proxyscraper</type>
+            <baseUrl>https://api.proxyscrape.com</baseUrl>
+            <!-- each proxy will be added with this max usage limit -->
+            <maxUsageLimit>3</maxUsageLimit>
+            <serial><![CDATA[SerialKey]]></serial>
+            <expirationQuery>request=lastupdated,proxytype=http</expirationQuery>
+            <remainingQuery>request=remaining</remainingQuery>
+            <ipQuery>request=getproxies,proxytype=http,timeout=2000,country=US,status=alive,ssl=yes</ipQuery>
+            <!-- qty of ips added per one run -->
+            <pageSize>30</pageSize>
+            <!-- a way how this proxies are disabled -->
+            <disableStrategy>200response</disableStrategy>
+            <!-- when to disable proxy completely -->
+            <disableLevel>10</disableLevel>
+            <!-- when to deactivate proxy (temporarily)-->
+            <deactivateLevel>15</deactivateLevel>
+            <!-- if there are more ips of this group - script will skip adding new -->
+            <maxAllowedActiveIps>60</maxAllowedActiveIps>
+        </scraperPrem>
+        <scraperFree>
+            <enabled>1</enabled>
+            <type>proxyscraper</type>
+            <baseUrl>https://api.proxyscrape.com</baseUrl>
+            <maxUsageLimit>3</maxUsageLimit>
+            <serial><![CDATA[]]></serial>
+            <ipQuery>request=getproxies,proxytype=http,timeout=2000,country=ALL,status=alive,ssl=yes</ipQuery>
+            <pageSize>10</pageSize>
+            <disableStrategy>200response</disableStrategy>
+            <disableLevel>10</disableLevel>
+            <deactivateLevel>15</deactivateLevel>
+            <maxAllowedActiveIps>200</maxAllowedActiveIps>
+        </scraperFree>
+        <!-- proxies extracted from a file -->
+        <gsa>
+            <!--
+                format: proxyUrl(IP);proxyPort;maxUsageLimit;userName;userPass
+                first two fields are mandatory
+            -->
+            <enabled>0</enabled>
+            <csvSeparator>:</csvSeparator>
+            <maxUsageLimit>3</maxUsageLimit>
+            <type>file</type>
+            <!-- path to the file, note, it can be an url like http://somedomain/someurl-->
+            <path>/var/www/proxies.txt</path>
+            <pageSize>10</pageSize>
+            <disableStrategy>200response</disableStrategy>
+            <disableLevel>10</disableLevel>
+            <deactivateLevel>15</deactivateLevel>
+            <maxAllowedActiveIps>10</maxAllowedActiveIps>
+        </gsa>
+        <!-- type should be in file|proxyscraper|default, all other types are ignored -->
+        <badSample>
+            <type>unknown</type>
+            <enabled>0</enabled>
+        </badSample>
+    </proxySources>
+</config>

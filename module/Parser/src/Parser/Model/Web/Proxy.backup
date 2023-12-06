@@ -1,0 +1,547 @@
+<?php
+/**
+ * Copyright WebExperiment.info
+ * Created by ernazar.
+ * Date: 06.09.2017
+ * Time: 17:38
+ */
+
+namespace Parser\Model\Web;
+
+
+/*
+ * choose proxy from list, selected proxy depends on the proxy load and status (enabled/disabled)
+ */
+
+use Parser\Model\SimpleObject;
+use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Db\Sql\Expression;
+use Laminas\Db\Sql\Sql;
+use Parser\Model\Helper\Config;
+
+class Proxy extends SimpleObject
+{
+    public const MAX_RETRIES = 10;
+    public const MAX_PROXY_RETRIES = 3;
+    public $retryCount = 0;
+    public $proxyRetryCount = 0;
+    public $maxRetries;
+    public $maxProxyRetries;
+    protected $overuse = false;
+    protected $allowedGroups = [];
+    protected $disallowedGroups = [];
+    private $db;
+    private $proxyConnection;
+
+
+    public function __construct(AdapterInterface $db, Config $config)
+    {
+        /**
+         * $config = ['maxRetries' => 5, 'maxProxyRetries' => 5]
+         */
+        $this->db = $db;
+        $configSettings = $config->getConfig('settings');
+        $this->maxRetries = $configSettings['maxRetries'] ?? self::MAX_RETRIES;
+        $this->maxProxyRetries = $configSettings['maxProxyRetries'] ?? self::MAX_PROXY_RETRIES;
+
+    }
+
+    public static function staticUpdate($db, $data, $where)
+    {
+        $sql = new Sql($db);
+        $update = $sql->update('proxy')
+            ->where($where)
+            ->set($data);
+        $stmt = $sql->prepareStatementForSqlObject($update);
+        return $stmt->execute();
+    }
+
+    /**
+     * Gets an available proxy if any
+     * @return true
+     */
+
+    public function loadAvailableProxy($ignoreProxies = [])
+    {
+        $proxies = $this->loadProxyData(true, $ignoreProxies);
+        if ($proxies->current()) {
+            $data = $proxies->current();
+            $this->loadFromArray($data);
+            $this->retryCount = 0;
+            return true;
+        }
+        // loading all proxies to figure out why there are no active proxy
+        $proxies = $this->loadProxyData();
+        if ($proxies->current()) {
+            $list = [];
+            while ($proxies->current()) {
+                $list[] = $proxies->current();
+                $proxies->next();
+            }
+            // we have some proxies, all of them either overloaded, or disabled.
+            $total = count($list);
+            $disabled = 0;
+            $overloaded = 0;
+            foreach ($list as $proxy) {
+                if (!$proxy['enabled']) {
+                    $disabled++;
+                } elseif ($proxy['max_usage_limit'] <= $proxy['active_connections']) {
+                    $overloaded++;
+                }
+            }
+            $this->addError('Total proxies:' . $total . '; Disabled:' . $disabled . '; Enabled but overloaded:' . $overloaded);
+        } else {
+            // empty proxy list
+            $this->addError('Can\'t load any proxy');
+
+        }
+        return false;
+    }
+
+    /**
+     * @param bool $active
+     * @param array $ignoreProxies
+     * @return \Laminas\Db\Adapter\Driver\ResultInterface
+     */
+    public function loadProxyData($active = false, $ignoreProxies = []): \Laminas\Db\Adapter\Driver\ResultInterface
+    {
+        // selecting all active proxies which can be used.
+        $sql = 'SELECT 
+       `p`.`last_used` AS `last_used`, 
+       `p`.`usage_count` AS `usage_count`, 
+       `p`.`ip` AS `ip`, 
+       `p`.`port` AS `port`, 
+       `p`.`enabled` AS `enabled`, 
+       `p`.`proxy_id` AS `proxy_id`, 
+       `p`.`max_usage_limit` AS `max_usage_limit`, 
+       `p`.`user_name` AS `user_name`,
+       `p`.`user_pass` AS `user_pass`, 
+       `p`.`tor_auth` AS `tor_auth`, 
+       `p`.`tor_auth_port` AS `tor_auth_port`, 
+       `p`.`proxy_character` AS `proxy_character`, 
+       `p`.`proxy_type` AS `proxy_type`, 
+       `p`.`group` AS `group`, 
+       count(`pc`.proxy_connection_id) AS `active_connections` 
+FROM `proxy` AS `p` 
+LEFT JOIN `proxy_connection` AS `pc` ON `p`.`proxy_id`=`pc`.`proxy_id` AND `pc`.`closed`=0 ';
+        $where = [];
+        $having = [];
+//        $groupBy = '';
+        $groupBy = ' GROUP BY `p`.`proxy_id` ';
+        if ($active) {
+            $where[] = 'p.enabled = 1 and p.active=1';
+//            $sql .= ' WHERE p.enabled = 1 and p.active=1';
+
+
+            if (!$this->isOveruse()) {
+                // if no overuse flag set, check for open connections
+                $having[] = ' p.max_usage_limit > active_connections ';
+            }
+        } else {
+            $where[] = ' p.enabled = 1 ';
+        }
+        if($ignoreProxies){
+            $where[] = 'p.proxy_id NOT IN(\'' . implode("','", $ignoreProxies) . '\')';
+        }
+        if ($allowedGroups = $this->getAllowedGroups()) {
+            $where[] = ' p.group IN(\'' . implode("','", $allowedGroups) . '\')';
+        }
+        if($disallowedGroups = $this->getDisallowedGroups()){
+            $where[] = ' p.group NOT IN(\'' . implode("','", $disallowedGroups) . '\')';
+        }
+        if ($where) {
+            $sql .= ' WHERE ' . implode(' and ', $where);
+        }
+        if ($groupBy) {
+            $sql .= $groupBy;
+        }
+        if ($having) {
+            $sql .= ' HAVING ' . implode(' and ', $having);
+        }
+        $sql .= ' ORDER BY `active_connections` ASC, `last_used` ASC';
+//        pr($sql);
+        $stmt = $this->db->getDriver()->createStatement();
+        $stmt->setSql($sql);
+        return $stmt->execute();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOveruse(): bool
+    {
+        return $this->overuse;
+    }
+
+    /**
+     * @param bool $overuse
+     * @return Proxy
+     */
+    public function setOveruse(bool $overuse): Proxy
+    {
+        $this->overuse = $overuse;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllowedGroups(): array
+    {
+        return $this->allowedGroups;
+    }
+    /**
+     * @param array $allowedGroups
+     * @return Proxy
+     */
+    public function setAllowedGroups(array $allowedGroups): Proxy
+    {
+        $this->allowedGroups = $allowedGroups;
+        return $this;
+    }
+
+    public function resetAllowedGroups(): Proxy
+    {
+        $this->allowedGroups = [];
+        return $this;
+    }
+
+    /*
+     * enable proxy if it became valid
+    */
+
+    /**
+     * @param array $data
+     * @return \Laminas\Db\Adapter\Driver\ResultInterface
+     */
+    public function add($data = [])
+    {
+        // todo change proxy class to tablegateway finally
+        $sql = new Sql($this->getDb());
+        if (isset($data['ip'], $data['port'])) {
+            $insert = $sql->insert('proxy')
+                ->values([
+                    'ip' => $data['ip'],
+                    'port' => $data['port'],
+                    'max_usage_limit' => $data['max_usage_limit'] ?? 3,
+                    'group' => $data['group'] ?? 'default',
+                    'enabled' => $data['enabled'] ?? true,
+                    'active' => $data['active'] ?? true,
+                    'proxy_type' => $data['proxy_type'] ?? 'http',
+                    'proxy_character' => $data['proxy_character'] ?? 'single',
+                    'user_name' => $data['user_name'] ?? null,
+                    'user_pass' => $data['user_pass'] ?? null,
+                ]);
+            $stmt = $sql->prepareStatementForSqlObject($insert);
+            return $stmt->execute();
+        }
+        return false;
+    }
+
+    /*
+     * vary proxy depending on the recent load
+     */
+
+    public function getDb()
+    {
+        return $this->db;
+    }
+
+    public function setDb(AdapterInterface $db)
+    {
+        $this->db = $db;
+        return $this;
+    }
+
+    public function remove($id)
+    {
+        $sql = new Sql($this->getDb());
+        $remove = $sql->delete('proxy');
+        $remove->where(['proxy_id' => $id]);
+        $stmt = $sql->prepareStatementForSqlObject($remove);
+        $result = $stmt->execute();
+
+        return $result;
+    }
+
+    public function disable($reason)
+    {
+
+    }
+
+    public function enable($key = '')
+    {
+
+    }
+
+    public function addConnection($url, $user_agent_id, $tag, $group)
+    {
+        if (!$this->getProperty('proxy_id')) {
+            $this->addError('failed to create connection (addConnection), no proxy data specified');
+            return false;
+        }
+        $sql = new Sql($this->db);
+        $insert = $sql->insert('proxy_connection')
+            ->values([
+                'proxy_id' => $this->getProperty('proxy_id'),
+                'url' => $url,
+                'user_agent_id' => $user_agent_id,
+                'tag' => strlen($tag) <= 20 ? $tag : substr($tag, 0, 20),
+                'group' => strlen($group) <= 20 ? $group : substr($group, 0, 20),
+                'created' => new Expression('NOW()'),
+                'created_interval' => new Expression('UNIX_TIMESTAMP(DATE_FORMAT(NOW(), "%Y-%m-%d %H"))'),
+            ]);
+
+        $stmt = $sql->prepareStatementForSqlObject($insert);
+        $result = $stmt->execute();
+        $connection_id = $result->getGeneratedValue();
+        $this->setProperty('proxy_connection_id', $connection_id);
+        $this->proxyConnection = (object)['proxy_connection_id' => $connection_id, 'log' => ''];
+
+        return $connection_id;
+
+    }
+
+    public function closeConnection($key = '')
+    {
+        $this->updateConnection(['closed' => true, 'modified' => new Expression('NOW()')], $key);
+        $this->triggerUsage();
+    }
+
+    /**
+     * @param array $data
+     * @param string $key
+     * @return \Laminas\Db\Adapter\Driver\ResultInterface
+     */
+    public function updateConnection($data = [], $key = null): \Laminas\Db\Adapter\Driver\ResultInterface
+    {
+        $data = $this->validateProxyConnectionData($data);
+        $key = $key ?: $this->getProperty('proxy_connection_id');
+        $sql = new Sql($this->db);
+        $update = $sql->update('proxy_connection')->where(['proxy_connection_id' => $key])->set($data);
+        $stmt = $sql->prepareStatementForSqlObject($update);
+        return $stmt->execute();
+    }
+
+    private function validateProxyConnectionData($data): array
+    {
+        if (isset($data['closed'])) {
+            $data['closed'] = $data['closed'] ? true : false;
+        }
+        if (isset($data['usage_log'])) {
+            unset($data['usage_log']);
+        }
+        return $data;
+    }
+
+    public function triggerUsage(): \Laminas\Db\Adapter\Driver\ResultInterface
+    {
+        $this->setProperty('usage_count', $this->getProperty('usage_count') + 1);
+        return $this->update(['usage_count' => $this->getProperty('usage_count'), 'last_used' => date('Y-m-d H:i:s')]);
+    }
+
+    /**
+     * @param array $data an array of fields to update
+     * @param null $key proxy_id
+     * @return \Laminas\Db\Adapter\Driver\ResultInterface
+     */
+    public function update($data = [], $key = null): \Laminas\Db\Adapter\Driver\ResultInterface
+    {
+
+        $key = $key ?: $this->getProperty('proxy_id');
+        $sql = new Sql($this->db);
+        $update = $sql->update('proxy')->where(['proxy_id' => $key])->set($data);
+        $stmt = $sql->prepareStatementForSqlObject($update);
+//        print_r($stmt->getSql());die();
+        return $stmt->execute();
+
+    }
+
+    public function logConnection($curl_code, $log = null, $retry = null, $proxy_retry = null): \Laminas\Db\Adapter\Driver\ResultInterface
+    {
+        $data = [
+//            'usage_log' => $log,
+            'curl_code' => $curl_code,
+            'retry' => $retry ?: $this->retryCount,
+            'proxy_retry' => $proxy_retry ?: $this->proxyRetryCount,
+        ];
+        return $this->updateConnection($data);
+    }
+
+    public function loadConnectionData()
+    {
+        $key = $this->getProperty('proxy_connection_id');
+        $data = [];
+        if ($key) {
+            $sql = new Sql($this->db);
+            $select = $sql->select(['pc' => 'proxy_connection'])
+                ->join(['ua' => 'user_agent'], 'ua.user_agent_id=pc.user_agent_id')
+                ->where(['pc.proxy_connection_id' => $key]);
+            $stmt = $sql->prepareStatementForSqlObject($select);
+            $result = $stmt->execute();
+            $data = $result->current();
+        }
+        return $data;
+
+    }
+
+    public function uploadProxyListFromArray($proxies, $disableOld = true)
+    {
+
+    }
+
+    public function uploadProxyListFromFile($file, $disableOld = true)
+    {
+        if ($file) {
+            $proxies = $this->extractProxyListFromFile($file);
+            return $this->uploadProxyList($proxies, $disableOld);
+        }
+        return false;
+    }
+
+    public function extractProxyListFromFile($file): array
+    {
+        $data = file_get_contents($file);
+
+        $data = explode("\r\n", $data);
+        $list = [];
+        foreach ($data as $line) {
+            $item = explode("\t", $line);
+            if (is_array($item) && count($item) >= 2) {
+                $ip = trim($item[0]);
+                $port = trim($item[1]);
+                $list[] = ['ip' => $ip, 'port' => $port];
+            }
+        }
+        return $list;
+    }
+
+    public function uploadProxyList($proxies, $disableOld = true)
+    {
+        // insert newly added proxies and remove those which does not exist
+        if (!count($proxies)) {
+            $this->addError('Empty proxies list in the config file');
+            return false;
+        }
+        $sql = new Sql($this->db);
+        if ($disableOld) {
+            // disable all proxies
+            $update = $sql->update('proxy')
+                ->set(['enabled' => false]);
+            $stmt = $sql->prepareStatementForSqlObject($update);
+            $stmt->execute();
+        }
+
+        if (isset($proxies['ip'])) {
+            $proxies = [$proxies];
+        }
+
+        foreach ($proxies as $proxy) {
+            $sql = new Sql($this->db);
+            // selecting proxy if it exists
+            $select = $sql->select('proxy')
+                ->where(['ip' => $proxy['ip'], 'port' => $proxy['port']]);
+            $stmt = $sql->prepareStatementForSqlObject($select);
+            $result = $stmt->execute();
+            if ($result->current()) {
+                // enable this proxy and continue
+                $sql = new Sql($this->db);
+                $update = $sql->update('proxy')
+                    ->set([
+                        'enabled' => true,
+                        'active' => true,
+                        'max_usage_limit' => $proxy['max_usage_limit'] ?? 3,
+                        'group' => $proxy['group'] ?? 'default',
+                    ])
+                    ->where(['ip' => $proxy['ip'], 'port' => $proxy['port']]);
+
+                $stmt = $sql->prepareStatementForSqlObject($update);
+                $stmt->execute();
+                continue;
+            }
+
+            //no proxy exists, we need to create it
+            $sql = new Sql($this->db);
+            $insert = $sql->insert('proxy')
+                ->values([
+                    'ip' => $proxy['ip'],
+                    'port' => $proxy['port'],
+                    'max_usage_limit' => $proxy['max_usage_limit'] ?? 3,
+                    'group' => $proxy['group'] ?? 'default',
+
+                ]);
+            $stmt = $sql->prepareStatementForSqlObject($insert);
+            $stmt->execute();
+        }
+
+        if ($disableOld) {
+            // now we need to check proxies which are not in the list and to remove them if possible (some proxies might be active at the moment).
+            // deleting proxies which are disabled
+            $sql = new Sql($this->db);
+            $delete = $sql->delete('proxy')
+                ->where('enabled = 0');
+            $stmt = $sql->prepareStatementForSqlObject($delete);
+            $stmt->execute();
+        }
+
+        return count($proxies) . ' were found and updated';
+    }
+
+    public function loadProxyByIpPort($ip, $port)
+    {
+        $sql = new Sql($this->db);
+        // selecting proxy if it exists
+        $select = $sql->select('proxy')
+            ->where(['ip' => $ip, 'port' => $port]);
+        $stmt = $sql->prepareStatementForSqlObject($select);
+        $result = $stmt->execute();
+        if ($result->current()) {
+            // enable this proxy and continue
+            return $result->current();
+        }
+        return false;
+    }
+
+    public function getProxyList($where, $columns = []): array
+    {
+        $sql = new Sql($this->db);
+        // selecting proxy if it exists
+        $select = $sql->select('proxy')
+            ->where($where);
+        if ($columns) {
+            $select->columns($columns);
+        }
+        $stmt = $sql->prepareStatementForSqlObject($select);
+        $result = $stmt->execute();
+        $list = [];
+        while ($proxy = $result->current()) {
+            $list[] = $proxy;
+            $result->next();
+        }
+        return $list;
+    }
+
+    public function getDisallowedGroups()
+    {
+        return $this->disallowedGroups;
+    }
+
+    /**
+     * @param array $disallowedGroups
+     * @return Proxy
+     */
+    public function setDisallowedGroups(array $disallowedGroups): Proxy
+    {
+        $this->disallowedGroups = $disallowedGroups;
+        return $this;
+    }
+
+    public function resetDisallowedGroups(): Proxy
+    {
+        $this->disallowedGroups = [];
+        return $this;
+    }
+
+
+
+}

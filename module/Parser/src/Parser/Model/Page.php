@@ -1,0 +1,205 @@
+<?php
+/**
+ * Copyright WebExperiment.info
+ * Created by Creator.
+ * Date: 02.12.2018
+ * Time: 13:18
+ */
+
+namespace Parser\Model;
+
+use Parser\Model\Web\Browser;
+use Parser\Model\Web\Proxy;
+use Parser\Model\Web\UserAgent;
+
+/**
+ * Class Page
+ * @package Parser\Model
+ * A simple wrapper for single url scraping.
+ */
+class Page extends SimpleObject
+{
+    public $content;
+    public $url;
+    public $db;
+    public $lastCallCode;
+    private $browser;
+    private $xpath;
+    private $proxy;
+    private $userAgent;
+
+    public $tag;
+    public $group;
+
+    public function __construct($url, Proxy $proxy, UserAgent $userAgent)
+    {
+        $this->url = $url;
+        $this->userAgent = $userAgent;
+        $this->proxy = $proxy;
+        $this->proxy->loadAvailableProxy();
+        $this->db = $this->proxy->getDb();
+        if ($this->proxy->hasErrors()) {
+            $this->loadErrors($this->proxy);
+        }
+    }
+
+
+    /**
+     * @param string $url
+     * @param array  $mode
+     * @param array  $header
+     * @param array  $browserConfig
+     * @throws \Exception
+     */
+    public function getPage($url = '', $mode = [], $header = [], $browserConfig = [])
+    {
+        $url = $url ? trim($url) : $this->url;
+        $browser = new Browser($url, $this->proxy, $this->userAgent, $browserConfig, $mode);
+        // browser tries to get the content, if required several attempts will be performed with proxy/user agent changes.
+        $this->browser = $browser;
+        if ($header) {
+            $browser->generateHeader($header);
+        }
+        $browser->setGroup($this->getGroup())->setTag($this->getTag());
+        $browser->getAdvancedPage();
+        $cInfo = $browser->getProperty('CurlInfo');
+        $this->content = $browser->getContent();
+        $this->lastCallCode = $browser->code;
+        if ($browser->code == '400') {
+            // no such product
+            $browser->addError('no product found');
+        }
+    }
+
+    public function getProxy()
+    {
+        return $this->proxy;
+    }
+
+    public function getUserAgent()
+    {
+        return $this->userAgent;
+    }
+
+    public function extractSingleField($html, $path, $attribute = null)
+    {
+        $this->extractField($data, $html, $path, 'field', $attribute);
+        if (isset($data[0])) {
+            return $data[0]['field'];
+        }
+        return '';
+    }
+
+    public function extractField(&$data = [], $html, $path, $fieldName, $attribute = null)
+    {
+        if (! $data) {
+            $data = [];
+        }
+        $res = $this->getResourceByXpath($html, $path);
+        if ($res->length) {
+            foreach ($res as $key => $item) {
+                $val = self::extendedTrim($attribute ? $item->getAttribute($attribute) : $item->textContent);
+                $data[$key][$fieldName] = $val;
+            }
+        }
+        foreach ($data as $key => $item) {
+            if (! isset($data[$key][$fieldName])) {
+                $data[$key][$fieldName] = "non";
+            }
+        }
+        return $data;
+    }
+
+    public function getResourceByXpath($html, $path)
+    {
+        if (! $this->xpath) {
+            $dom = new \DOMDocument('1.0', 'UTF-8');
+            @$dom->loadHTML($html);
+            $this->xpath = new \DOMXPath($dom);
+        }
+        return $this->xpath->query($path);
+    }
+
+    public static function extendedTrim($string)
+    {
+        $data = explode("\n", $string);
+        $newData = [];
+        if (is_array($data)) {
+            foreach ($data as $k => $v) {
+                $v = trim($v);
+                if ($v) {
+                    $newData[] = $v;
+                }
+            }
+        }
+        $newString = implode(" ", $newData);
+        return $newString;
+    }
+
+    public function _getContentFromHTMLbyXpath($html, $path)
+    {
+        $res = $this->getResourceByXpath($html, $path);
+        return $this->_getContentFromElement($res, "%s");
+    }
+
+    public function _getContentFromElement($res, $htmlWrap)
+    {
+        $productDescription = '';
+        $i = 0;
+        $separator = '';
+        if ($res->length) {
+            foreach ($res as $element) {
+                $xDoc = new \DOMDocument('1.0', 'UTF-8');
+                $cloned = @$element->cloneNode(true);
+                $xDoc->appendChild($xDoc->importNode($cloned, true));
+                if ($i++) {
+                    $separator = '';
+                }
+                $productDescription .= $separator . $xDoc->saveHTML();
+            }
+            $productDescription = sprintf($htmlWrap, $productDescription);
+        }
+        return $productDescription;
+    }
+
+    public function resetXpath()
+    {
+        $this->xpath = null;
+    }
+
+    /**
+     * @param mixed $tag
+     * @return TablePage
+     */
+    public function setTag($tag)
+    {
+        $this->tag = $tag;
+        return $this;
+    }
+
+    /**
+     * @param mixed $group
+     * @return TablePage
+     */
+    public function setGroup($group)
+    {
+        $this->group = $group;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGroup()
+    {
+        return $this->group;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTag()
+    {
+        return $this->tag;
+    }
+}

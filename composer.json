@@ -1,0 +1,99 @@
+{
+    "name": "web-experiment/scraper",
+    "description": "a proxy based parsing tool",
+    "type": "project",
+    "license": "Custom license",
+    "keywords": [
+        "parser",
+        "amazon",
+        "zf"
+    ],
+    "homepage": "https://web-experiment.info/",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=7.1",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "ext-zlib": "*",
+        "ext-dom": "*",
+        "ext-pdo": "*",
+        "ext-intl": "*",
+        "ext-simplexml": "*",
+        "laminas/laminas-mvc": "^3.6.1",
+	"laminas/laminas-eventmanager": "^3.10.0",
+        "laminas/laminas-development-mode": "^3.0",
+        "laminas/laminas-cache": "3.11.0",
+        "laminas/laminas-db": "^2.8.1",
+        "laminas/laminas-mvc-form": "*",
+        "laminas/laminas-json": "^3.0",
+        "laminas/laminas-log": "^2.10",
+        "laminas/laminas-mvc-i18n": "^1.0",
+        "laminas/laminas-mvc-plugins": "^1.0.1",
+        "laminas/laminas-psr7bridge": "^1.10.0",
+        "laminas/laminas-session": "^2.8",
+        "laminas/laminas-di": "*",
+        "laminas/laminas-mail": "^2.8.0",
+        "tracy/tracy": "^2.4",
+        "laminas/laminas-mime": "^2.6",
+        "jimmiw/php-time-ago": "^2.0",
+        "laminas/laminas-paginator": "^2.8",
+        "laminas/laminas-authentication": "^2.6",
+        "laminas/laminas-hydrator": "*",
+        "laminas/laminas-inputfilter": "^2.10",
+        "laminas/laminas-mvc-plugin-fileprg": "^1.1",
+        "laminas/laminas-mvc-plugin-identity": "^1.1",
+        "laminas/laminas-mvc-plugin-prg": "^1.1",
+        "laminas/laminas-serializer": "^2.9",
+        "laminas/laminas-validator": "^2.12",
+        "yidas/yii2-bower-asset": "2.0.13",
+        "yiisoft/yii2": "^2.0.49.1",
+        "longman/telegram-bot": "*",
+        "monolog/monolog": "^2.1",
+        "laminas/laminas-cache-storage-adapter-redis": "*",
+        "laminas/laminas-cli": "*",
+        "laminas/laminas-diactoros": "^3.2.0",
+        "laminas/laminas-zendframework-bridge": "^1.7",
+        "predis/predis": "^2.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Parser\\": "module/Parser/src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ApplicationTest\\": "module/Application/test/"
+        }
+    },
+    "extra": [],
+    "scripts": {
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "development-disable": "laminas-development-mode disable",
+        "development-enable": "laminas-development-mode enable",
+        "development-status": "laminas-development-mode status",
+        "post-create-project-cmd": [
+            "@development-enable"
+        ],
+        "post-update-cmd": [
+            "php yii migrate-parser --interactive=0",
+            "php yii migrate-bestbuy --interactive=0",
+            "php yii migrate-cdiscount --interactive=0",
+            "php yii migrate-comparator --interactive=0"
+        ],
+        "post-install-cmd": [
+            "php yii migrate-parser --interactive=0",
+            "php yii migrate-bestbuy --interactive=0",
+            "php yii migrate-cdiscount --interactive=0",
+            "php yii migrate-comparator --interactive=0"
+        ],
+        "serve": "php -S 0.0.0.0:8080 -t public/ public/index.php",
+        "test": "phpunit"
+    },
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
+        }
+    }
+}

@@ -1,0 +1,32 @@
+<div class="row">
+    <div class="col-sm-5">
+        <div class="dataTables_info" id="datatable-responsive_info" role="status" aria-live="polite">
+            Showing
+            <?= $from ?> to <?= $to ?> of <?= $this->totalItems ?> entries
+        </div>
+    </div>
+    <div class="col-sm-7">
+        <div class="dataTables_paginate">
+            <?php if (count($this->pages)) : ?>
+                <ul class="pagination" style="margin:0">
+                    <?php foreach ($this->pages as $key => $page) : ?>
+                        <?php
+                        $class = isset($page['First']) ? " previous" : "";
+                        $class = isset($page['Last']) ? " next" : "";
+                        $id = isset($page['First']) ? " id ='datatable-buttons_previous'" : "";
+                        $id = isset($page['Last']) ? " id ='datatable-buttons_next'" : "";
+                        if (isset($page['Selected'])) {
+                            $class = $class ? $class . " disabled" : " active";
+                        }
+                        ?>
+                        <li<?= $id; ?> class="paginate_button<?= $class; ?>">
+                            <a href="<?= $page['URL'] ?>" aria-controls="datatable-responsive"
+                               data-dt-idx="<?= $key ?>"
+                               tabindex="<?= $key ?>"><?= $page['Title'] ?></a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>

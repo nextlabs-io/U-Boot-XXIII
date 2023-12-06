@@ -1,0 +1,69 @@
+server {
+    #note, more proper config is related to magento reconfiguration of the index.php file (move it to a sub folder and a doc_root with it)
+    listen 80;
+    root /home/web-user/www;
+    index index.php;
+    server_name serverName;
+
+    ## These locations are hidden by .htaccess normally
+    location ^~ /app/                {
+        deny all;
+    }
+    location ^~ /includes/           {
+        deny all;
+    }
+    location ^~ /lib/                {
+        deny all;
+    }
+    location ^~ /media/downloadable/ {
+        deny all;
+    }
+    location ^~ /pkginfo/            {
+        deny all;
+    }
+    location ^~ /report/config.xml   {
+        deny all;
+    }
+    location ^~ /var/                {
+        deny all;
+    }
+
+    location /var/export/ {
+         ## Allow admins only to view export folder
+        auth_basic           "Restricted"; ## Message shown in login window
+        auth_basic_user_file htpasswd; ## See /etc/nginx/htpassword
+        autoindex            on;
+    }
+
+    location  /. {
+         ## Disable .htaccess and other hidden files
+        return 404;
+    }
+
+    location @handler {
+         ## Magento uses a common front handler
+        rewrite / /index.php;
+    }
+
+    location ~ .php/ {
+         ## Forward paths like /js/index.php/x.js to relevant handler
+        rewrite ^(.*.php)/ $1 last;
+    }
+
+    location ~ .php$ {
+        include snippets/fastcgi-php.conf;
+        # note, change socket path to the proper one.
+        fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
+        fastcgi_buffer_size 128k;
+        fastcgi_buffers 256 16k;
+        fastcgi_busy_buffers_size 256k;
+        fastcgi_temp_file_write_size 256k;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+        fastcgi_read_timeout 1200;
+    }
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
+        expires max;
+        log_not_found off;
+    }
+}

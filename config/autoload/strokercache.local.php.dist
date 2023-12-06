@@ -1,0 +1,14 @@
+<?php
+return [
+    'strokercache' => [
+        'strategies' => [
+            'enabled' => [
+                'StrokerCache\Strategy\RouteName' => [
+                    'routes' => [
+                        'home',
+                    ],
+                ],
+            ],
+        ],
+    ],
+];

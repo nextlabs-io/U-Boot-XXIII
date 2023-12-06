@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<config>
+    <categoryProfiles>
+        <bestsellers>
+            <profileMarker>id="zg"</profileMarker>
+            <pagesQtyPerRun>8</pagesQtyPerRun>
+            <pageTag>pg={page}</pageTag>
+            <productBeginTag><![CDATA[<!--header grid_row-->]]></productBeginTag>
+            <productEndTag><![CDATA[<!--container-->]]></productEndTag>
+            <productTag><![CDATA[//li[@class='zg-item-immersion']//a/@href]]></productTag>
+            <pagingTag><![CDATA[//ul[@class='a-pagination']//li]]></pagingTag>
+            <pagingMarker>class="a-pagination"</pagingMarker>
+            <asinTag>data-asin</asinTag>
+            <maxCategoryPage>1000</maxCategoryPage>
+            <navigationContainer><![CDATA[.//ul[@id = 'zg_browseRoot']//li//]]></navigationContainer>
+            <navigationContainerId>zg_browseRoot</navigationContainerId>
+        </bestsellers>
+        <regular>
+            <profileMarker>id="s-refinements"</profileMarker>
+            <productBeginTag><![CDATA[<!--sp:feature:host-atf-->]]></productBeginTag>
+            <productEndTag><![CDATA[<!--sp:end-feature:host-atf-->]]></productEndTag>
+            <pagesQtyPerRun>8</pagesQtyPerRun>
+            <pageTag>page={page}</pageTag>
+            <productTag><![CDATA[//h2//a[@class='a-link-normal a-text-normal']/@href]]></productTag>
+            <pagingTag><![CDATA[//ul[@class='a-pagination']//li]]></pagingTag>
+            <pagingMarker>class="a-pagination"</pagingMarker>
+            <asinTag>data-asin</asinTag>
+            <maxCategoryPage>1000</maxCategoryPage>
+        </regular>
+    </categoryProfiles>
+    <category>
+        <pageTag>page</pageTag>
+        <productTag><![CDATA[//*[contains(concat(' ', @class, ' '), 's-result-item')]]]></productTag>
+        <pagingTag><![CDATA[//a[@id='pagnNextLink']]]></pagingTag>
+        <pagingTag2><![CDATA[//ul[@class='a-pagination']/li[@class='a-last']//a]]></pagingTag2>
+        <asinTag>data-asin</asinTag>
+        <maxCategoryPage>50</maxCategoryPage>
+        <navigationContainer><![CDATA[.//ul[@id = 'zg_browseRoot']//li//]]></navigationContainer>
+        <navigationContainerId>zg_browseRoot</navigationContainerId>
+    </category>
+    <product>
+        <variationContainerStart><![CDATA[var dataToReturn =]]></variationContainerStart>
+        <variationContainerEnd><![CDATA[return dataToReturn;]]></variationContainerEnd>
+        <parentAsinTag>parentAsin</parentAsinTag>
+        <variationAsinsTag>dimensionToAsinMap</variationAsinsTag>
+    </product>
+</config>
+

@@ -1,0 +1,136 @@
+<?php
+/**
+ * @var Laminas\View\Renderer\PhpRenderer $this
+ */
+$colspan = 6;
+?>
+<div class="pafos"><h1 data-title="Data Extraction"><a href="<?= $this->url('manager', ['action' => 'list']) ?>">Web
+            Data Extraction Engine</a></h1>
+    <p>Crawl, scrape and parse <img src="images/az.png" alt="Amazon"> content</p></div>
+<div class="row tile_count">
+    <div class="numbers-count">
+        <div class="pack">
+            <?php if ($this->scraperPremiumStats) : ?>
+                <div class="col-md-2 col-sm-4 col-xs-12 tile_stats_count" data-toggle="tooltip" data-placement="bottom"
+                     data-original-title="Total products, including blacklisted and disabled.">
+                    <span class="count_top"><i class="fa fa-product-hunt"></i> ProxyScraper</span>
+                    <?php foreach ($this->scraperPremiumStats as $key => $data) : ?>
+                        <div class="count_bottom"><strong><?= $key ?>: </strong> <?= $data ?></div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else : ?>
+                <div class="col-md-2 col-sm-4 col-xs-12 tile_stats_count" data-toggle="tooltip" data-placement="bottom"
+                     data-original-title="Total products, including blacklisted and disabled.">
+                    <span class="count_top"><i class="fa fa-product-hunt"></i> Total products</span>
+                    <div class="count"><?= $productStats->products->total ?></div>
+                </div>
+            <?php endif; ?>
+
+            <div class="col-md-2 col-sm-4 col-xs-12 tile_stats_count" data-toggle="tooltip" data-placement="bottom"
+                 data-original-title="The number of products synced by Engine.">
+                <span class="count_top"><i class="fa  fa-refresh"></i> Active products</span>
+                <div class="count"><?= $productStats->products->active ?></div>
+            </div>
+
+
+            <div class="col-md-2 col-sm-4 col-xs-12 tile_stats_count" data-toggle="tooltip" data-placement="bottom"
+                 data-original-title="If the stock quantity drops fast, please contact the software administrator.">
+                <span class="count_top"><i class="fa  fa-shopping-cart"></i> Total in stock</span>
+                <div class="count"><?= $productStats->products->inStock ?></div>
+                <span class="count_bottom">Being synced atm: <i
+                            class="red"><?= $productStats->products->beingSynced ?></i></span>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-12 tile_stats_count" data-toggle="tooltip" data-placement="bottom"
+                 data-original-title="How many products are due to synchronization.">
+                <span class="count_top"><i class="fa fa-clock-o"></i> Products in the queue</span>
+                <div class="count"><?= $productStats->products->queued ?></div>
+                <span class="count_bottom">The lower the better</span>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-12 tile_stats_count" data-toggle="tooltip" data-placement="bottom"
+                 data-original-title="A product might be synced several times a day, depending on how often it is likely to change price or stock.">
+                <span class="count_top"><i class="fa fa-check"></i> Synced per 24h</span>
+                <div class="count red"><?= $productStats->products->synced ?></div>
+                <span class="count_bottom">Changed: price <i
+                            class="red"><?= $productStats->products->updatedPrice ?></i>; stock <i
+                            class="red"><?= $productStats->products->updatedStock ?></i></span>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-12 tile_stats_count" data-toggle="tooltip" data-placement="bottom"
+                 data-original-title="How many products are being processed in the moment. Outdated numbers mean how many processes hang more than usual.">
+                <span class="count_top"><i class="fa fa-check"></i> Active threads</span>
+                <div class="count red"><?= $productStats->products->activeThreads ?></div>
+                <span class="count_bottom">Outdated <i
+                            class="red"><?= $productStats->products->pendingThreads ?></i></span>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div><!-- numbers count -->
+</div>
+<div class="col-md-8 col-sm-8 col-xs-12">
+    <?php echo $this->chartSync24 ?>
+</div>
+<div class="col-md-4 col-sm-4 col-xs-12">
+    <?php echo $this->chartSyncSpeed ?>
+</div>
+<div class="clearfix"></div>
+
+
+<div id="proxyDiv"><h2>Loading proxy data... Please wait <i class="fa fa-spinner fa-spin"></i></h2></div>
+<div class="modal fade bs-example-modal-lg proxy-stat-helptip" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Proxy usage statistics</h4>
+            </div>
+            <div class="modal-body">
+                <p>Find out how a proxy works.</p>
+                <p><strong>The best look.</strong> A blue line means all requests are getting positive response.</p>
+                <div class="progress progress_sm">
+                    <div class="progress-bar bg-blue" role="progressbar" data-transitiongoal="100" style="width: 100%;"
+                         aria-valuenow="100" data-toggle="tooltip" data-placement="top"
+                         data-original-title="200 positive response 100%"></div>
+                </div>
+                <p><strong>The worst look.</strong> Non-blue colors indicate failure requests.</p>
+                <div class="progress progress_sm">
+                    <div class="progress-bar bg-red" role="progressbar" data-transitiongoal="100" style="width: 100%;"
+                         aria-valuenow="100" data-toggle="tooltip" data-placement="top"
+                         data-original-title="0 zero response 100%"></div>
+                </div>
+                <p>If half of the line is red (zero response), the proxy is blocked for 1 hour, after that it is
+                    automatically enabled.</p>
+                <p>Every proxy has 3-line stats representing 1 hour, 3 hours, and 24 hours statistics. You can also see
+                    the number of requests performed during each interval.</p>
+                <p>The quality of the proxy depends on many options: the proxy origin, user agent (and other headers),
+                    or a website being scraped. One proxy may work on Amazon.ca or fail on Amazon.com.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<?php if ($this->timeline) : ?>
+    <ul>
+        <?php foreach ($this->timeline as $event) : ?>
+            <li><?= $event['timestamp'] ?> :: <?= $event['delta'] ?> :: <?= $event['tag'] ?></li>
+        <?php endforeach; ?>
+    </ul>
+<?php endif ?>
+<div class="clearfix"></div>
+<script>
+
+    $(document).ready(function () {
+        $.ajax({
+            url: "<?= $this->url('manager', ['action' => 'ajaxproxydata']) ?>",
+            cache: false
+        })
+            .done(function (html) {
+                $("#proxyDiv").html(html);
+                $('[data-toggle="tooltip"]').tooltip({
+                    container: 'body'
+                });
+            });
+    });
+</script>

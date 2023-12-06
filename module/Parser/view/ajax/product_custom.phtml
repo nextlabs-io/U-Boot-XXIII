@@ -1,0 +1,132 @@
+<form name="custom-product-form" id="custom-product-form-<?= $productId ?>">
+    <div class="modal-body">
+        <div class="x_panel">
+            <div class="x_content">
+                <?php
+                unset($flags['custom_images_flag']);
+                foreach($flags as $flag => $flagData) :
+                    $attribute = str_replace(["custom_", "_flag"], "", $flag);
+
+                    ?>
+                <div class="form-group">
+                    <label class="control-label col-md-4 col-sm-4 col-xs-12" data-toggle="tooltip"
+                           data-placement="right" title=""
+                           data-original-title=""><input type="checkbox" name="<?= $flag ?>" value="1"
+                                                         class="js-switch-custom" <?= isset($data[$flag]) && $data[$flag] ? " checked " : "" ?>/>
+                        <?= $flagData['title']?> <a href="#" class="copy-attribute-value" data-attribute="<?= $attribute ?>" data-target-attribute="custom_<?= $attribute ?>"
+                                 title="Click to load attribute value from product"><i class="fa fa-arrow-circle-down"></i></a>
+                    </label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                        <?php if($flagData['type'] == 'text') : ?>
+                        <input type="text" class="form-control col-md-7 col-xs-12" name="custom_<?= $attribute ?>"
+                               value="<?= isset($data['custom_'.$attribute]) ? $data['custom_'.$attribute] : "" ?>">
+                        <?php elseif($flagData['type'] == 'textarea') : ?>
+                            <textarea name="custom_<?= $attribute ?>"
+                                      class="form-control col-md-7 col-xs-12"><?= isset($data['custom_'.$attribute]) ? $data['custom_'.$attribute] : '' ?></textarea>
+                        <?php endif;?>
+                    </div>
+                </div>
+                <input type="hidden" name="original_<?= $attribute ?>" value="<?= $product[$attribute] ?>">
+                <div class="clearfix"></div>
+                <?php endforeach;?>
+
+                <hr/>
+                <div class="form-group">
+                    <label class="control-label col-md-12 col-sm-12 col-xs-12"><input type="checkbox"
+                                                                                      name="custom_images_flag"
+                                                                                      value="1"
+                                                                                      class="js-switch-custom" <?= isset($data['custom_images_flag']) && $data['custom_images_flag'] ? " checked " : "" ?>/>
+                        Images (one image url per line, you can change images order by moving urls in the
+                        textarea) <a href="#" class="copy-attribute-value" data-attribute="images" data-target-attribute="custom_images"
+                                              title="Click to load attribute value from product"><i class="fa fa-arrow-circle-down"></i></a></label>
+                    <div class="clearfix"></div>
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <?php $images = isset($data['custom_images']) ?  $data['custom_images'] : "";
+                        $images = explode("|", $images);
+                        if(is_array($images)) {
+                            $images = array_map("trim", $images);
+                            $images = implode("\n", $images);
+                        } else {
+                            $images = "";
+                        }
+                        ?>
+                        <textarea id="custom_images_tagged" name="custom_images" type="text"
+                                  class="tags form-control col-md-12 col-xs-12"
+                        ><?= $images ?></textarea>
+                        <div class="clearfix"></div>
+                        <div class="custom-images-div" id="custom-images-div"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer" id="custom_modal_footer">
+        <button type="button" class="btn btn-default btn-custom-save">Save
+        </button>
+        <button type="button" class="btn btn-default"
+                data-dismiss="modal">Close
+        </button>
+    </div>
+    <input type="hidden" name="aepridcs" id="aepridcs" value="<?= $productId ?>">
+    <input type="hidden" name="original_images" value="<?= str_replace("|", "\n", $product['images']) ?>">
+</form>
+
+<div id="loading-data-div" style="display:none">
+    <button type="button" disabled class="btn btn-default btn-custom-save"><i class="fa fa-spinner fa-spin"></i>Saving
+    </button>
+    <button type="button" class="btn btn-default"
+            data-dismiss="modal">Close
+    </button>
+</div>
+<script>
+    $('#custom_images_tagged').bind('input propertychange', function () {
+        updateImagesDiv();
+    });
+    $('.btn-custom-save').click(
+        function () {
+            $('#custom_modal_footer').html($('#loading-data-div').html())
+
+            var productID = $("[name='aepridcs']").val();
+            console.log(productID);
+            if (productID) {
+                var baseUrl = "<?= $this->url('manager', ['action' => 'ajaxproductcustom']) ?>";
+                $.ajax({
+                    url: baseUrl + "?id=" + productID,
+                    cache: false,
+                    type: "POST",
+                    data: $("#custom-product-form-<?= $productId ?>").serialize(),
+                }).done(function (html) {
+                    console.log('success');
+                    $("#customProductData").html(html);
+                    if ($(".js-switch-custom")[0]) {
+                        var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch-custom'));
+                        elems.forEach(function (html) {
+                            var switchery = new Switchery(html, {
+                                color: '#e62a17'
+                            });
+                        });
+                    }
+                    updateImagesDiv();
+                });
+
+            }
+        }
+    );
+
+    function updateImagesDiv() {
+        var list = $('#custom_images_tagged').val().split('\n');
+        var string = "";
+        $.each(list, function (index, value) {
+            if (value.indexOf('https://') != -1) {
+                string += "<img src='" + value + "' width='60px' />&nbsp;";
+            }
+        });
+        $('#custom-images-div').html(string);
+    }
+    $('.copy-attribute-value').click(function(){
+        var item = $(this);
+        var value = $('#custom-product-form-<?= $productId ?>').find('input[name="original_' + item.attr('data-attribute') + '"]').val();
+        $("[name='"+item.attr('data-target-attribute') +"']").val(value);
+        if(item.attr('data-attribute') == 'images') updateImagesDiv();
+    })
+</script>

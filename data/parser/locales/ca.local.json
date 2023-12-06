@@ -1,0 +1,230 @@
+{
+  "settings": {
+    "baseUrl": "https://www.amazon.ca/",
+    "amazonMerchantId": "A3DWYIK6Y9EEQB",
+    "magentoControlUrl": [],
+    "magentoControlPass": [],
+    "locale": "ca",
+    "amazon_key": "AKIAJGORQED7LGUQTFAQ",
+    "amazon_secret": "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",
+    "amazon_tag": "smart0a3c-20",
+    "amazon_responseGroup": "Small,ItemAttributes",
+    "amazon_fields": {
+      "mpn": "MPN",
+      "ean": "EAN",
+      "upc": "UPC",
+      "model": "Model",
+      "manufacturer": "Manufacturer",
+      "short_description": "Feature",
+      "brand": "Brand",
+      "title": "Title"
+    },
+    "checkOfferCookie": "1",
+    "checkCamel": "0"
+  },
+  "offersPage": {
+    "offerUrl": "gp/offer-listing/{ASIN}/{ref}?ie=UTF8",
+    "tags": {
+      "primeTag": "&f_primeEligible=true",
+      "newTag": "&f_new=true",
+      "freeshippingTag": "&f_freeShipping=true"
+    },
+    "paths": {
+      "offer": "//div[contains(concat(' ', @class, ' '), 'olpOffer')]",
+      "price": ".//span[contains(concat(' ', @class, ' '), 'olpOfferPrice')]",
+      "prime": ".//i[contains(concat(' ', @class, ' '), 'a-icon-prime')]",
+      "shipping": ".//p[@class='olpShippingInfo']",
+      "condition": ".//span[contains(concat(' ', @class, ' '), 'olpCondition')]",
+      "offerID": ".//input[contains(concat(' ', @name, ' '), 'offeringID')]",
+      "seller": ".//div[contains(concat(' ', @class, ' '), ' olpSellerColumn')]//a",
+      "sellerName": ".//h3[contains(concat(' ', @class, ' '), 'olpSellerName')]/span/a",
+      "delivery": ".//div[@class='a-column a-span3 olpDeliveryColumn']",
+      "fba": "Fulfilment by Amazon",
+      "isAddon": ".//i[contains(concat(' ', @class, ' '), 'a-icon-addon')]",
+      "returnUrl": ".//a[@id='olpDetailPageLink']"
+    },
+    "skip": {
+      "isAddon": {
+        "validator": "strlen_positive",
+        "value": "1"
+      },
+      "shipping": {
+        "validator": "contains",
+        "value": "import fee deposit"
+      }
+    },
+    "shipsFromTag": "/Ships from ([A-Za-z\\-, ]+)/"
+  },
+  "productMarkers": {
+    "base": "//form[@id=\"addToCart\"]//*[@name=\"ASIN\"]/@value",
+    "mobile": "//form[@id=\"buyNow\"]//*[@name=\"asin\"]/@value",
+    "alternative": "//link[@rel=\"canonical\"]/@href"
+  },
+  "merchantMarkers": {
+    "base": "//form[@id=\"addToCart\"]//*[@name=\"merchantID\"]/@value",
+    "mobile": "//input[@id=\"ftSelectMerchant\"]/@value"
+  },
+  "productPage": {
+    "featureSign": "&#8226;",
+    "priceTags": {
+      "specialPrice": ".//*[@id='priceblock_ourprice']",
+      "dealPrice": ".//*[@id='priceblock_dealprice']",
+      "salePrice": ".//*[@id='priceblock_saleprice']"
+    },
+    "regularPrice": ".//*[@id='price']//span[contains(concat(' ', @class, ' '), 'priceBlockStrikePriceString')]",
+    "importFee": ".//*[@id='priceblock_ourprice_ifdmsg']",
+    "stockTags": {
+      "stock_full": {
+        "pattern": "In Stock.",
+        "qty": "20",
+        "strategy": "strpos"
+      },
+      "stock_usual_days": {
+        "pattern": "/Usually ships within ([0-9\\ \\x74\\x6f]+) days/",
+        "qty": "10",
+        "check": "0",
+        "strategy": "pregmatch"
+      },
+      "stock_qty": {
+        "pattern": "/Only ([0-9]+) left in stock/",
+        "qty": "match",
+        "check": "1",
+        "strategy": "pregmatch"
+      },
+      "stock_weeks": {
+        "pattern": "/Usually ships within ([12]\\ \\x74\\x6f\\ [23]) weeks\\./",
+        "qty": "11",
+        "check": "0",
+        "strategy": "pregmatch"
+      },
+      "stock_available": {
+        "pattern": "Available to ship in 1-2 days.",
+        "qty": "10",
+        "strategy": "strpos"
+      },
+      "in_stock_on_date": {
+        "pattern": "In stock on",
+        "qty": "10",
+        "strategy": "in_stock_on_date",
+        "check": "14",
+        "stock_months": "January,February,March,April,May,June,July,August,September,October,November,December"
+      }
+    },
+    "titleTags": {
+      "title": ".//*[@id='productTitle']"
+    },
+    "productUrl": "dp/{ASIN}/ref=olp_product_details?_encoding=UTF8&th=1&psc=1",
+    "merchantUrlTag": "&smid={MerchantId}",
+    "searchUrl": [],
+    "paths": {
+      "stock": ".//*[@id='availability']/span",
+      "stockDropDownOptions": ".//select[@id='quantity']/option",
+      "title": ".//*[@id='productTitle']",
+      "merchantInfo": ".//*[@id='merchant-info']",
+      "addOn": ".//*[@id='addOnItem_feature_div']",
+      "features": ".//*[@id='feature-bullets']/ul/li",
+      "content": ".//*[@class='content']/ul/li",
+      "contentTableLabel": ".//div[@id='prodDetails']//tr/td[@class='label']",
+      "contentTableValue": ".//div[@id='prodDetails']//tr/td[@class='value']",
+      "description": ".//*[@id='productDescription']/p",
+      "category": "//div[@id='wayfinding-breadcrumbs_container']//a",
+      "imagesHiRes": "/\"hiRes\":\"(https:\\/\\/[a-zA-Z0-9\\-\\.\\_\\/]+)\"/",
+      "imagesLarge": "/\"large\":\"(https:\\/\\/[a-zA-Z0-9\\-\\.\\_\\/]+)\"/",
+      "imagesMain": "/\"main\":\"(https:\\/\\/[a-zA-Z0-9\\-\\.\\_\\/]+)\"/",
+      "imagesStartTag": "var data =",
+      "imagesEndTag": "};",
+      "mpnTag": "Item model number:",
+      "madeby": ".//div[@id='bylineInfo_feature_div']//a",
+      "deliveryData": ".//div[@id='ddmDeliveryMessage']",
+      "offerUrl": ".//div[@id='olp_feature_div']//a/@href",
+      "fastTrack": ".//div[@id='fast-track-message']/div"
+    },
+    "skip": {
+      "reviews": "Customer Reviews",
+      "dateFirst": "Date First Available",
+      "asin": "ASIN:",
+      "rank": "Amazon Bestsellers Rank",
+      "amazonBusiness": "Amazon Business"
+    },
+    "try_smid_to_m_tag": "0",
+    "priceSkip": "+;&nbsp",
+    "proxy_groups": []
+  },
+  "attributes": {
+    "checkWeight": "1",
+    "weightLimit": "1000",
+    "checkDimension": "1",
+    "dimensionLimit": "7500",
+    "weight": {
+      "regular": {
+        "type": "table",
+        "label": "Item Weight",
+        "containerpath": ".//tr[@class='size-weight']",
+        "valuepath": "./td[@class='value']",
+        "labelpath": "./td[@class='label']"
+      },
+      "type2": {
+        "type": "ul",
+        "label": "Item Weight:",
+        "containerpath": ".//table[@id='productDetailsTable']//li",
+        "action": "replace-label",
+        "#text": ">"
+      }
+    },
+    "shippingWeight": {
+      "regular": {
+        "type": "table",
+        "label": "Shipping Weight",
+        "containerpath": ".//tr[@class='shipping-weight']",
+        "valuepath": "./td[@class='value']",
+        "labelpath": "./td[@class='label']"
+      },
+      "type2": {
+        "type": "ul",
+        "label": "Boxed-product Weight:",
+        "containerpath": ".//table[@id='productDetailsTable']//li",
+        "action": "replace-label"
+      },
+      "type3": {
+        "type": "ul",
+        "label": "Boxed-product Weight:",
+        "containerpath": ".//div[@id='detail_bullets_id']//li",
+        "action": "replace-label"
+      },
+      "type4": {
+        "type": "ul",
+        "label": "Shipping Weight:",
+        "containerpath": ".//div[@id='detail_bullets_id']//li",
+        "action": "replace-label"
+      }
+    },
+    "productDimensions": {
+      "regular": {
+        "type": "table",
+        "label": "Product Dimensions",
+        "containerpath": ".//tr[@class='size-weight']",
+        "valuepath": "./td[@class='value']",
+        "labelpath": "./td[@class='label']"
+      },
+      "regular2": {
+        "type": "table",
+        "label": "Package Dimensions",
+        "containerpath": ".//tr[@class='size-weight']",
+        "valuepath": "./td[@class='value']",
+        "labelpath": "./td[@class='label']"
+      },
+      "type2": {
+        "type": "ul",
+        "label": "Product Dimensions:",
+        "containerpath": ".//table[@id='productDetailsTable']//li",
+        "action": "replace-label"
+      },
+      "type3": {
+        "type": "ul",
+        "label": "Product Dimensions:",
+        "containerpath": ".//div[@id='detail_bullets_id']//li",
+        "action": "replace-label"
+      }
+    }
+  }
+}

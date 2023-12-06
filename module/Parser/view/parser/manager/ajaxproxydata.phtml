@@ -1,0 +1,92 @@
+<?php
+$codeSettings = [
+200 => [' bg-blue', '200 positive response'],
+0 => [' bg-red', '0 zero response'],
+503 => [' bg-gray-light', '503 banned response'],
+555 => [' bg-gray-medium', 'captcha page'],
+403 => [' bg-gray-dark', '403 probably wrong url/missing product'],
+"x" => [' bg-gray-black', ''],
+]
+?>
+<?php if(isset($this->data) && count($this->data)) : ?>
+
+    <?php
+    $this->cycle()->assign(['', '', '<div class="clearfix"></div>'], 'clearfix');
+    foreach($this->data as $proxy) : ?>
+        <div class="col-md-4 col-sm-4 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2> <?= $proxy['data']['ip'] ?>
+                        :<?= $proxy['data']['port'] ?>
+                    </h2>
+                    <div class="clearfix"></div>
+                    <small class="bg-info">Group : <?= $proxy['data']['group'] ?></small>
+                    <?= $proxy['data']['active'] ? '<small class="bg-blue-c"> Active</small>' : '<small class="bg-red-c"> Disabled</small>' ?>
+                    <small class="bg-blue-c">Thread limit: <?= $proxy['data']['max_usage_limit'] ?></small>
+                    <ul class="nav navbar-right panel_toolbox" style="float:right;">
+                        <li data-toggle="tooltip" data-placement="left" data-original-title="Click for explanation">
+                            <a data-toggle="modal" data-target=".proxy-stat-helptip"><i
+                                        class="fa fa-question-circle"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+
+                </div>
+                <?php $stats = $proxy['stats'];
+                foreach($stats as $hour => $line) :
+
+                    if(isset($line[0])) {
+                        // put zero response to the last place
+                        $zeroQ = $line[0];
+                        unset($line[0]);
+                        $line[0] = $zeroQ;
+                    }
+                    ?>
+                    <div>
+                        <?= $hour ?>h - <?= $line['total'] ?> requests
+                    </div>
+
+                    <div class="x_content2 proxy" style="width:100%">
+                        <div class="progress progress_sm">
+                            <?php foreach($line as $code => $qty) :
+                                if(strpos($qty, "%") !== false):
+
+                                    if(isset($codeSettings[$code])) {
+                                        $class = $codeSettings[$code][0];
+                                        $tip = $codeSettings[$code][1] . " " . $qty;
+                                    } else {
+                                        $class = $codeSettings["x"][0];
+                                        $tip = $codeSettings["x"][1] . " " . $qty;
+                                    }
+
+                                    $qty2 = str_replace("%", "", $qty);
+                                    if($qty2) : ?>
+                                        <div class="progress-bar<?= $class ?>" role="progressbar"
+                                             data-transitiongoal="<?= $qty2 ?>"
+                                             style="width: <?= $qty ?>;"
+                                             aria-valuenow="<?= $qty2 ?>" data-toggle="tooltip"
+                                             data-placement="top"
+                                             data-original-title="<?= $tip ?>"></div>
+                                    <?php endif; ?>
+                                <?php else : ?>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+
+            </div>
+        </div>
+        <?= $this->cycle()->setName('clearfix')->next() ?>
+    <?php endforeach; ?>
+<?php else : ?>
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>No proxy found
+                </h2>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>

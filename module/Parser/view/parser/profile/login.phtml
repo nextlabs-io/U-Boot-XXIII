@@ -1,0 +1,136 @@
+<?php
+/* @var $form  Parser\Model\Form\LoginForm */
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="ROBOTS" content="NOINDEX"/>
+    <meta name="ROBOTS" content="NOFOLLOW"/>
+    <meta name="ROBOTS" content="NOARCHIVE"/>
+    <meta name="ROBOTS" content="NOSNIPPET"/>
+    <meta name="ROBOTS" content="NOODP "/>
+    <?= $this->headTitle() ?>
+
+    <?= $this->headMeta()
+        ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+        ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+    ?>
+
+    <!-- Le styles -->
+    <?= $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/images/favicon.ico'])
+        ->prependStylesheet($this->basePath('build/css/custom.min.css'))
+        ->prependStylesheet($this->basePath('vendors/animate.css/animate.min.css'))
+        ->prependStylesheet($this->basePath('vendors/nprogress/nprogress.css'))
+        ->prependStylesheet($this->basePath('vendors/font-awesome/css/font-awesome.min.css'))
+        ->prependStylesheet($this->basePath('vendors/bootstrap/dist/css/bootstrap.min.css'))
+    ?>
+</head>
+
+<body class="login">
+<div class="page-title">
+<div style="width:100%; height:200px; 
+position:relative;">
+<div class="pafosbg">Data Extraction Engine</div>
+</div>
+        <div class="title_center">
+            <h1>Web Data Extraction Engine</h1>
+        </div>
+
+    </div>
+    <div class="clearfix"></div>
+<div>
+    <a class="hiddenanchor" id="signup"></a>
+    <a class="hiddenanchor" id="signin"></a>
+
+    <div class="login_wrapper">
+        <div class="animate form login_form">
+            <?php if ($this->message) : ?>
+                <div class="alert alert-info alert-dismissible" role="alert"><strong>
+                        <?= $this->message ?>
+                    </strong></div>
+            <?php endif; ?>
+            <?php if ($this->errors) : ?>
+                <div class="alert alert-danger alert-dismissible" role="alert"><strong>
+                        <?= $this->errors ?>
+                    </strong></div>
+            <?php endif; ?>
+            <?php $form->prepare(); ?>
+            <section class="login_content">
+                <form method="post">
+                    <h1>Login Form</h1>
+                    <div>
+                        <?php $form->prepare(); ?>
+                        <?php $login = $form->get('login'); ?>
+                        <?php echo $this->formText($login); ?>
+                    </div>
+                    <div>
+                        <?php $pass = $form->get('password'); ?>
+                        <?php echo $this->formPassword($pass); ?>
+                    </div>
+                    <div>
+                        <button class="btn btn-default submit">Log in</button>
+                        <!--a class="reset_pass" href="#">Lost your password?</a-->
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                    <div class="separator">
+                        <!--p class="change_link">New to site?
+                            <a href="#signup" class="to_register"> Create Account </a>
+                        </p-->
+
+                        <div class="clearfix"></div>
+                        <br />
+
+                        <div>
+                            <p><a href="https://web-experiment.info/" title="Web-Experiment.info">Web-Experiment.info</a></p>
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </div>
+
+        <!--div id="register" class="animate form registration_form">
+            <section class="login_content">
+                <form>
+                    <h1>Create Account</h1>
+                    <div>
+                        <input type="text" class="form-control" placeholder="Username" required="" />
+                    </div>
+                    <div>
+                        <input type="email" class="form-control" placeholder="Email" required="" />
+                    </div>
+                    <div>
+                        <input type="password" class="form-control" placeholder="Password" required="" />
+                    </div>
+                    <div>
+                        <a class="btn btn-default submit" href="index.html">Submit</a>
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                    <div class="separator">
+                        <p class="change_link">Already a member ?
+                            <a href="#signin" class="to_register"> Log in </a>
+                        </p>
+
+                        <div class="clearfix"></div>
+                        <br />
+
+                        <div>
+                            <p><a href="https://web-experiment.info/" title="Web-Experiment.info">Web-Experiment.info</a></p>
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </div-->
+    </div>
+</div>
+</body>
+</html>
+
+

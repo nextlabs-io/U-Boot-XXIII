@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <settings>
+        <baseUrl>https://www.amazon.in/</baseUrl>
+        <amazonMerchantId></amazonMerchantId>
+        <magentoControlUrl>http://apm.webandpeople.com/index.php/amazonimportproducts/index/parser</magentoControlUrl>
+        <magentoControlPass>secret_key</magentoControlPass>
+        <locale>com</locale>
+        <amazon_key></amazon_key>
+        <amazon_secret></amazon_secret>
+        <amazon_tag></amazon_tag>
+        <amazon_responseGroup>Small,ItemAttributes</amazon_responseGroup>
+        <amazon_fields>
+            <mpn>MPN</mpn>
+            <ean>EAN</ean>
+            <upc>UPC</upc>
+            <model>Model</model>
+            <manufacturer>Manufacturer</manufacturer>
+            <short_description>Feature</short_description>
+            <brand>Brand</brand>
+        </amazon_fields>
+        <preferredCountry>Canada,United States</preferredCountry>
+        <browserHeader>
+            <Accept-Language>en,en-US;q=0.7,en;q=0.3</Accept-Language>
+            <Accept><![CDATA[text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8]]></Accept>
+        </browserHeader>
+
+    </settings>
+    <offersPage>
+        <offerUrl><![CDATA[gp/offer-listing/{ASIN}/ref=olp_f_freeShipping?ie=UTF8]]></offerUrl>
+        <tags>
+            <primeTag><![CDATA[&f_primeEligible=true]]></primeTag>
+            <newTag><![CDATA[&condition=new]]></newTag>
+            <freeshippingTag><![CDATA[&f_freeShipping=true]]></freeshippingTag>
+        </tags>
+        <freeShippingTag><![CDATA[&f_freeShipping=true]]></freeShippingTag>
+        <sellerTag><![CDATA[&m={seller}]]></sellerTag>
+        <paths>
+            <offer><![CDATA[.//div[contains(concat(' ', @class, ' '), 'olpOffer')]]]></offer>
+            <price><![CDATA[.//span[contains(@class, 'olpOfferPrice')]]]></price>
+            <prime><![CDATA[.//i[contains(concat(' ', @class, ' '), 'a-icon-prime')]]]></prime>
+            <shipping><![CDATA[.//p[@class='olpShippingInfo']]]></shipping>
+            <condition><![CDATA[.//span[contains(concat(' ', @class, ' '), ' olpCondition ')]]]></condition>
+            <offerID><![CDATA[.//input[contains(concat(' ', @name, ' '), 'offeringID')]]]></offerID>
+            <seller><![CDATA[.//div[contains(concat(' ', @class, ' '), ' olpSellerColumn')]//a]]></seller>
+            <sellerName><![CDATA[.//h3[contains(concat(' ', @class, ' '), ' olpSellerName')]/span/a]]></sellerName>
+            <delivery><![CDATA[.//div[contains(concat(' ', @class, ' '), ' olpDeliveryColumn')]]]></delivery>
+            <fba>Fulfillment by Amazon</fba>
+            <isAddon><![CDATA[.//i[contains(concat(' ', @class, ' '), 'a-icon-addon')]]]></isAddon>
+        </paths>
+        <skip>
+            <isAddon>
+                <validator>strlen_positive</validator>
+                <value>1</value>
+            </isAddon>
+<!--            <prime>-->
+<!--                <validator>positive</validator>-->
+<!--                <value>0</value>-->
+<!--            </prime>-->
+        </skip>
+    </offersPage>
+    <productMarkers>
+        <base><![CDATA[//form[@id="addToCart"]//*[@name="ASIN"]/@value]]></base>
+        <mobile><![CDATA[//form[@id="buyNow"]//*[@name="asin"]/@value]]></mobile>
+        <alternative><![CDATA[//link[@rel="canonical"]/@href]]></alternative>
+    </productMarkers>
+    <merchantMarkers>
+        <base><![CDATA[//form[@id="addToCart"]//*[@name="merchantID"]/@value]]></base>
+        <mobile><![CDATA[//input[@id="ftSelectMerchant"]/@value]]></mobile>
+    </merchantMarkers>
+
+    <productPage>
+        <priceTags>
+            <specialPrice><![CDATA[.//*[@id='priceblock_ourprice']]]></specialPrice>
+            <dealPrice><![CDATA[.//*[@id='priceblock_dealprice']]]></dealPrice>
+            <salePrice><![CDATA[.//*[@id='priceblock_saleprice']]]></salePrice>
+        </priceTags>
+        <regularPrice><![CDATA[.//*[@id='price']//span[contains(@class, 'priceBlockStrikePriceString')]]]></regularPrice>
+        <stockTags>
+            <stock><![CDATA[/Only ([0-9]+) left in stock/]]></stock>
+            <stockFull><![CDATA[In Stock.]]></stockFull>
+            <stockFullQty>20</stockFullQty>
+        </stockTags>
+        <titleTags>
+            <title><![CDATA[.//*[@id='productTitle']]]></title>
+        </titleTags>
+        <productUrl><![CDATA[dp/{ASIN}?ie=UTF8&psc=1]]></productUrl>
+        <merchantUrlTag><![CDATA[&smid={MerchantId}]]></merchantUrlTag>
+        <paths>
+            <stock><![CDATA[.//*[@id='availability']/span]]></stock>
+            <stockDropDownOptions><![CDATA[.//select[@id='quantity']/option]]></stockDropDownOptions>
+            <title><![CDATA[.//*[@id='productTitle']]]></title>
+            <merchantInfo><![CDATA[.//*[@id='merchant-info']]]></merchantInfo>
+            <addOn><![CDATA[.//*[@id='addOnItem_feature_div']]]></addOn>
+            <features><![CDATA[.//*[@id='feature-bullets']/ul/li]]></features>
+            <content><![CDATA[.//*[@class='content']/ul/li]]></content>
+            <contentTableLabel><![CDATA[.//div[@id='prodDetails']//tr/td[@class='label']]]></contentTableLabel>
+            <contentTableValue><![CDATA[.//div[@id='prodDetails']//tr/td[@class='value']]]></contentTableValue>
+            <description><![CDATA[.//*[@id='productDescription']/p]]></description>
+            <category><![CDATA[//div[@id='wayfinding-breadcrumbs_container']//a]]></category>
+            <imagesHiRes><![CDATA[/"hiRes":"(https:\/\/[a-zA-Z0-9\-\.\_\/]+)"/]]></imagesHiRes>
+            <imagesLarge><![CDATA[/"large":"(https:\/\/[a-zA-Z0-9\-\.\_\/]+)"/]]></imagesLarge>
+            <imagesMain><![CDATA[/"main":"(https:\/\/[a-zA-Z0-9\-\.\_\/]+)"/]]></imagesMain>
+            <imagesStartTag>var data =</imagesStartTag>
+            <imagesEndTag><![CDATA[};]]></imagesEndTag>
+            <mpnTag>Item model number:</mpnTag>
+            <madeby><![CDATA[.//div[@id='bylineInfo_feature_div']//a]]></madeby>
+            <deliveryData><![CDATA[.//div[@id='ddmDeliveryMessage']]]></deliveryData>
+            <customerReviews><![CDATA[.//span[@id='acrCustomerReviewText']]]></customerReviews>
+            <fastTrack><![CDATA[.//div[@id='fast-track-message']/div]]></fastTrack>
+        </paths>
+        <skip>
+            <rank>Amazon Bestsellers Rank</rank>
+        </skip>
+        <searchUrl/>
+        <dec_point>.</dec_point>
+        <thousands_sep>,</thousands_sep>
+        <priceSkip><![CDATA[Rs.;₹;&#8377;&nbsp]]></priceSkip>
+    </productPage>
+    <attributes>
+        <checkWeight>1</checkWeight>
+        <weightLimit>1000</weightLimit>
+        <checkDimension>1</checkDimension>
+        <dimensionLimit>7500</dimensionLimit>
+        <weight>
+            <regular>
+                <type>table</type>
+                <label>Item Weight</label>
+                <containerpath><![CDATA[.//tr[@class='size-weight']]]></containerpath>
+                <valuepath><![CDATA[./td[@class='value']]]></valuepath>
+                <labelpath><![CDATA[./td[@class='label']]]></labelpath>
+            </regular>
+            <type1>
+                <type>table</type>
+                <label>Item Weight</label>
+                <containerpath><![CDATA[.//table[contains(concat(' ', @class, ' '), 'prodDetTable')]/tr]]></containerpath>
+                <valuepath><![CDATA[./td[contains(concat(' ', @class, ' '), 'a-size-base')]]]></valuepath>
+                <labelpath><![CDATA[./th[contains(concat(' ', @class, ' '), 'prodDetSectionEntry')]]]></labelpath>
+            </type1>
+            <type2>
+                <type>ul</type>
+                <label>Item Weight:</label>
+                <containerpath><![CDATA[.//table[@id='productDetailsTable']//li]]></containerpath>
+                <action>replace-label</action>
+            </type2>
+        </weight>
+        <shippingWeight>
+            <regular>
+                <type>table</type>
+                <label>Shipping Weight</label>
+                <containerpath><![CDATA[.//tr[@class='shipping-weight']]]></containerpath>
+                <valuepath><![CDATA[./td[@class='value']]]></valuepath>
+                <labelpath><![CDATA[./td[@class='label']]]></labelpath>
+            </regular>
+            <type2>
+                <type>ul</type>
+                <label>Boxed-product Weight:</label>
+                <containerpath><![CDATA[.//table[@id='productDetailsTable']//li]]></containerpath>
+                <action>replace-label</action>
+            </type2>
+            <type3>
+                <type>ul</type>
+                <label>Boxed-product Weight:</label>
+                <containerpath><![CDATA[.//div[@id='detail_bullets_id']//li]]></containerpath>
+                <action>replace-label</action>
+            </type3>
+        </shippingWeight>
+        <productDimensions>
+            <regular>
+                <type>table</type>
+                <label>Product Dimensions</label>
+                <containerpath><![CDATA[.//tr[@class='size-weight']]]></containerpath>
+                <valuepath><![CDATA[./td[@class='value']]]></valuepath>
+                <labelpath><![CDATA[./td[@class='label']]]></labelpath>
+            </regular>
+            <type1>
+                <type>table</type>
+                <label>Product Dimensions</label>
+                <containerpath><![CDATA[.//table[contains(concat(' ', @class, ' '), 'prodDetTable')]/tr]]></containerpath>
+                <valuepath><![CDATA[./td[contains(concat(' ', @class, ' '), 'a-size-base')]]]></valuepath>
+                <labelpath><![CDATA[./th[contains(concat(' ', @class, ' '), 'prodDetSectionEntry')]]]></labelpath>
+            </type1>
+            <regular2>
+                <type>table</type>
+                <label>Package Dimensions</label>
+                <containerpath><![CDATA[.//tr[@class='size-weight']]]></containerpath>
+                <valuepath><![CDATA[./td[@class='value']]]></valuepath>
+                <labelpath><![CDATA[./td[@class='label']]]></labelpath>
+            </regular2>
+            <type2>
+                <type>ul</type>
+                <label>Product Dimensions:</label>
+                <containerpath><![CDATA[.//table[@id='productDetailsTable']//li]]></containerpath>
+                <action>replace-label</action>
+            </type2>
+            <type3>
+                <type>ul</type>
+                <label>Product Dimensions:</label>
+                <containerpath><![CDATA[.//div[@id='detail_bullets_id']//li]]></containerpath>
+                <action>replace-label</action>
+            </type3>
+        </productDimensions>
+
+    </attributes>
+
+</config>
+
+

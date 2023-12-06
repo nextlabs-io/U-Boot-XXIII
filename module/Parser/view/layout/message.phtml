@@ -1,0 +1,32 @@
+<?php
+/**
+ * @var Laminas\View\Renderer\PhpRenderer $this
+ */
+?>
+<div class="">
+    <div class="page-title">
+        <div class="title_center">
+            <h1>Info message</h1>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_content">
+                    <div id="valid_indicator"></div>
+                    <?php if ($this->message) : ?>
+                        <div class="alert alert-info alert-dismissible" role="alert">
+                            <strong><?= $this->message ?></strong>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($this->errors) : ?>
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                            <strong><?= $this->errors ?></strong>
+                        </div>
+                    <?php endif; ?>
+                </div><!--x_content-->
+            </div><!-- x_panel -->
+        </div><!-- col-md-12 -->
+    </div><!--  row -->
+</div>

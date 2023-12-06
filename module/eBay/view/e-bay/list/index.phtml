@@ -1,0 +1,99 @@
+<?php
+/* @var $form  eBay\Model\Form\SearchForm */
+?>
+<?php
+$colspan = 5;
+?>
+<div class="main-content">
+    <div class="page-title">
+        <div class="title_center">
+            <h1>Check eBay response</h1>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_content">
+                    <?php $form->prepare(); ?>
+                    <?php echo $this->form()->openTag($form); ?>
+                    <?php if ($this->message) : ?>
+                        <div class="alert alert-info alert-dismissible" role="alert">
+                            <strong><?= $this->message ?></strong>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($this->errors) : ?>
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                            <strong><?= $this->errors ?></strong>
+                        </div>
+                    <?php endif; ?>
+                    <?php $search = $form->get('search'); ?>
+                    <div class="form-group">
+                        <label class="control-label col-md-1 col-sm-1 col-xs-12"><?php echo $this->formLabel($search); ?>
+                            <span class="required">*</span>
+                        </label>
+                        <div class="col-md-1 col-sm-1 col-xs-12">
+                            <div id="search-input" class="btn-group" data-toggle="buttons">
+                                <?php echo $this->formInput($search); ?>
+                                <?php if ($this->formElementErrors($search)) : ?>
+                                    <ul class="parsley-errors-list filled" id="parsley-id-1">
+                                        <li class="parsley-required"><?= $this->formElementErrors($search) ?></li>
+                                    </ul>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <div class="col-md-1 col-sm-1 col-xs-12">
+                            <button type="submit" class="btn bg-red">Start Search</button>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="ln_solid"></div>
+                    <?php echo $this->form()->closeTag(); ?>
+                </div><!--x_content-->
+            </div><!-- x_panel -->
+        </div><!-- col-md-12 -->
+    </div><!--  row -->
+    <div class="row scroll">
+        <div class="col-md-12 col-sm-12 col-xs-12 inner-scroll">
+            <table
+                    class="table table-striped jambo_table bulk_action dataTable products"
+                    role="grid"
+                    cellspacing="0">
+                <thead>
+                <tr role="row">
+                    <th class="column-title">Id</th>
+                    <th id="row_id" class="column-title">Title</th>
+                    <th class="column-title">sellingStatus</th>
+                    <th class="column-title">shippingInfo</th>
+                    <th class="column-title ">listingInfo</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                if (isset($this->items) && count($this->items)) : ?>
+                    <?php foreach ($this->items as $odd => $item) : ?>
+                    <?php
+                        /** @var $item DTS\eBaySDK\Finding\Types\SearchItem  */
+                        ?>
+                        <tr role="row" class="<?php echo ($odd % 2) ? 'odd' : 'even'; ?>">
+                            <td><?= $item->itemId ?></td>
+                            <td><a target="_blank" href="<?= $item->viewItemURL?>"><?= $item->title ?></a></td>
+                            <td><pre><?= print_r($item->sellingStatus->toArray()) ?></pre></td>
+                            <td><pre><?= print_r($item->shippingInfo->toArray()) ?></pre></td>
+                            <td><pre><?= print_r($item->listingInfo->toArray()) ?></pre></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else : ?>
+                    <tr role="row" class="odd">
+                        <td colspan="<?= $colspan ?>" align="center" style="height:300px">
+                            <strong>No items found</strong>
+                        </td>
+                    </tr>
+                <?php endif; ?>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>

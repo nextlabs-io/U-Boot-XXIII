@@ -1,0 +1,88 @@
+<?php
+/* @var $form  Parser\Model\Form\SearchForm */
+?>
+
+<?php $form->prepare(); ?>
+<?php echo $this->form()->openTag($form); ?>
+<div class="">
+    <div class="page-title">
+        <div class="title_center">
+            <h1>Get Products from BB</h1>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_content">
+                    <?php $categoryElement = $form->get('category_id'); ?>
+                    <?php if ($this->message) : ?>
+                        <div class="alert alert-info alert-dismissible" role="alert"><strong>
+                                <?= $this->message ?>
+                            </strong></div>
+                    <?php endif; ?>
+                    <?php if ($this->errors) : ?>
+                        <div class="alert alert-danger alert-dismissible" role="alert"><strong>
+                                <?= $this->errors ?>
+                            </strong></div>
+                    <?php endif; ?>
+
+                    <!--div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Prime selection
+                            <span class="required">*</span>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div id="syncable-select" class="btn-group" data-toggle="buttons">
+
+                                <?php
+                    $primeList = ['all' => 'all', 'prime' => 'prime'];
+                    foreach ($primeList as $primeItem => $value) : ?>
+                                    <label class="btn btn-default<?php if ($this->prime == $primeItem) {
+                        echo ' active';
+                    } ?>"
+                                           data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
+                                        <input type="radio" name="prime"
+                                               value="<?= $primeItem ?>"<?php if ($this->prime == $primeItem) {
+                        echo ' checked="checked"';
+                    } ?>>
+                                        &nbsp; <?= $value ?> &nbsp;
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div-->
+                    <div class="clearfix"></div>
+                    <div class="ln_solid"></div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12"><?php echo $this->formLabel($categoryElement); ?>
+                            <span class="required">*</span> </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12"> <?php echo $this->formTextarea($categoryElement); ?>
+                            <?php if ($this->formElementErrors($categoryElement)) : ?>
+                                <ul class="parsley-errors-list filled" id="parsley-id-2">
+                                    <li class="parsley-required">
+                                        <?= $this->formElementErrors($categoryElement) ?>
+                                    </li>
+                                </ul>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                            <button type="submit" class="btn btn-default">Submit</button>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- x_content -->
+            </div>
+            <!-- x_panel-->
+        </div>
+    </div>
+</div>
+<?php echo $this->form()->closeTag(); ?>
+
+<!-- col-md-4-->
+
+
+
+

@@ -1,0 +1,73 @@
+<?php
+/* @var $form  Parser\Model\Form\LoginForm */
+/**
+ * @var Laminas\View\Renderer\PhpRenderer $this
+ */
+?>
+<script type="text/javascript">
+    $( document ).ready(function() {
+        JSONEditor.defaults.options.iconlib = "fontawesome4";
+        var editor = new JSONEditor(document.getElementById('editor_holder'),{
+            "schema": <?= $schema ?>,
+            "startval": <?= $settings ?>,
+            "theme": 'bootstrap3'
+        });
+        // Hook up the validation indicator to update its
+        // status whenever the editor changes
+        // editor.on('change',function() {
+        //     // Get an array of errors from the validator
+        //     var errors = editor.validate();
+        //     var indicator = document.getElementById('valid_indicator');
+        //     // Not valid
+        //     if(errors.length) {
+        //         indicator.style.color = 'red';
+        //         indicator.textContent = "not valid";
+        //     }
+        //     // Valid
+        //     else {
+        //         indicator.style.color = 'green';
+        //         indicator.textContent = "valid";
+        //     }
+        // });
+        $('.submit-button').on("click", function () {
+            // console.log(editor.getValue());
+            var json = JSON.stringify(editor.getValue());
+            $('#input-settings').val(json);
+            $('#configForm').submit();
+        })
+    });
+</script>
+<div class="">
+    <div class="page-title">
+        <div class="title_center">
+            <h1>Edit <?= $locale ?> locale settings</h1>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_content">
+                    <div id="valid_indicator"></div>
+                    <?php if ($this->message) : ?>
+                        <div class="alert alert-info alert-dismissible" role="alert">
+                            <strong><?= $this->message ?></strong>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($this->errors) : ?>
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                            <strong><?= $this->errors ?></strong>
+                        </div>
+                    <?php endif; ?>
+                    <form method="post" id="configForm" action="<?php echo $this->url('manager-config', ['locale' => $locale]);?>">
+                        <input type="hidden" name="settings" id="input-settings" value="" />
+                        <button type="button" class="btn btn-default submit-button" id="submit-button">Save</button>
+                        <div id="editor_holder"></div>
+                        <button type="button" class="btn btn-default submit-button" id="submit-button-bottom">Save</button>
+                    </form>
+
+                </div><!--x_content-->
+            </div><!-- x_panel -->
+        </div><!-- col-md-12 -->
+    </div><!--  row -->
+</div>

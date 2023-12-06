@@ -1,0 +1,30 @@
+<?php
+/** @var \Parser\Model\Web\Phantom\PhantomTemplate $phantomData */
+?>
+"use strict";
+var page = require('webpage').create();
+var fs = require('fs');
+page.onResourceReceived = function (res) {
+console.log('<!--startJson-->' + JSON.stringify(res, undefined, 4) + '<!--endJson-->');
+};
+page.onLoadFinished = function () {
+console.log("page load finished");
+fs.write('<?= $phantomData->contentFilePath ?>', page.content, 'w');
+phantom.exit();
+};
+page.settings.userAgent = '<?= $phantomData->userAgent ?>';
+
+page.settings.resourceTimeout = 60000;
+
+page.open('<?= trim($phantomData->url) ?>', function (status) {
+    if (status !== 'success') {
+        console.log('Unable to access network');
+    } else {
+        var documentContent = page.evaluate(function () {
+        return document.title;
+        });
+        //fs.write('<?= $phantomData->contentFilePath ?>', documentContent, 'w');
+        console.log(documentContent);
+    }
+    phantom.exit();
+});

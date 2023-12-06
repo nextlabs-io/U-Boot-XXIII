@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<config>
+    <proxy>
+        <maxRetries>5</maxRetries>
+        <maxProxyRetries>5</maxProxyRetries>
+    </proxy>
+    <settings>
+        <baseUrl></baseUrl>
+        <table><![CDATA[.//table[@class='product_fields')]//td]]></table>
+        <fields><![CDATA[./td[1]]]></fields>
+        <values><![CDATA[./td[2]]]></values>
+    </settings>
+</config>
+

@@ -1,0 +1,41 @@
+<div class="x_panel">
+    <div class="x_title">
+        <h2><?= $chartId ?>
+        </h2>
+        <div class="clearfix"></div>
+    </div>
+    <div class="x_content2">
+        <div id="<?= $chartId ?>" style="width:100%; height:200px;"></div>
+    </div>
+</div>
+<script>
+    <?php
+    $lines = [];
+    $i = 0;
+    foreach ($this->data as $key => $value) {
+        if($value['sync']) {
+            $line = "{period:'" . $key . "',sync:". $value['sync'] .",price:". $value['price'] .",stock:". $value['stock'] ." }";
+            $lines[] = $line;
+        }
+    }
+    ?>
+
+    $(function () {
+        Morris.Area({
+            element: '<?= $chartId ?>',
+            data: [
+            <?= implode(",\n", $lines) ?>
+            ],
+            xkey: 'period',
+            ykeys: ['sync', 'price', 'stock'],
+            lineColors: ['#26B99A', '#ff1a24', '#120dad', '#3498DB'],
+            labels: ['Synced', 'Price Change', 'Stock Change'],
+            pointSize: 2,
+            hideHover: 'auto',
+            resize: true
+        });
+        $MENU_TOGGLE.on('click', function () {
+            $(window).resize();
+        });
+    });
+</script>

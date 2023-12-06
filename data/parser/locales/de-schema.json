@@ -1,0 +1,1018 @@
+{
+  "settings": {
+    "title": "settings",
+    "type": "object",
+    "properties": {
+      "baseUrl": {
+        "title": "baseUrl",
+        "type": "string"
+      },
+      "amazonMerchantId": {
+        "title": "amazonMerchantId",
+        "type": "string"
+      },
+      "magentoControlUrl": {
+        "title": "magentoControlUrl",
+        "type": "string"
+      },
+      "magentoControlPass": {
+        "title": "magentoControlPass",
+        "type": "string"
+      },
+      "browserHeader": {
+        "title": "browserHeader",
+        "type": "object",
+        "properties": {
+          "Accept-Language": {
+            "title": "Accept-Language",
+            "type": "string"
+          }
+        }
+      },
+      "checkCamel": {
+        "title": "checkCamel",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "amazon_fields": {
+        "title": "amazon_fields",
+        "type": "object",
+        "properties": {
+          "mpn": {
+            "title": "mpn",
+            "type": "string"
+          },
+          "ean": {
+            "title": "ean",
+            "type": "string"
+          },
+          "upc": {
+            "title": "upc",
+            "type": "string"
+          },
+          "model": {
+            "title": "model",
+            "type": "string"
+          },
+          "manufacturer": {
+            "title": "manufacturer",
+            "type": "string"
+          },
+          "short_description": {
+            "title": "short_description",
+            "type": "string"
+          },
+          "brand": {
+            "title": "brand",
+            "type": "string"
+          },
+          "title": {
+            "title": "title",
+            "type": "string"
+          },
+          "size": {
+            "title": "size",
+            "type": "string"
+          },
+          "item_dimensions": {
+            "title": "item_dimensions",
+            "type": "string"
+          },
+          "package_dimensions": {
+            "title": "package_dimensions",
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "offersPage": {
+    "title": "offersPage",
+    "type": "object",
+    "properties": {
+      "offerUrl": {
+        "title": "offerUrl",
+        "type": "string"
+      },
+      "tags": {
+        "title": "tags",
+        "type": "object",
+        "properties": {
+          "primeTag": {
+            "title": "primeTag",
+            "type": "string"
+          },
+          "newTag": {
+            "title": "newTag",
+            "type": "string"
+          }
+        }
+      },
+      "sellerTag": {
+        "title": "sellerTag",
+        "type": "string"
+      },
+      "freeShippingTag": {
+        "title": "freeShippingTag",
+        "type": "string"
+      },
+      "paths": {
+        "title": "paths",
+        "type": "object",
+        "properties": {
+          "offer": {
+            "title": "offer",
+            "type": "string"
+          },
+          "price": {
+            "title": "price",
+            "type": "string"
+          },
+          "prime": {
+            "title": "prime",
+            "type": "string"
+          },
+          "shipping": {
+            "title": "shipping",
+            "type": "string"
+          },
+          "condition": {
+            "title": "condition",
+            "type": "string"
+          },
+          "offerID": {
+            "title": "offerID",
+            "type": "string"
+          },
+          "seller": {
+            "title": "seller",
+            "type": "string"
+          },
+          "sellerName": {
+            "title": "sellerName",
+            "type": "string"
+          },
+          "delivery": {
+            "title": "delivery",
+            "type": "string"
+          },
+          "fba": {
+            "title": "fba",
+            "type": "string"
+          },
+          "isAddon": {
+            "title": "isAddon",
+            "type": "string"
+          },
+          "returnUrl": {
+            "title": "returnUrl",
+            "type": "string"
+          }
+        }
+      },
+      "skip": {
+        "title": "skip",
+        "type": "object",
+        "properties": {
+          "isAddon": {
+            "title": "isAddon",
+            "type": "object",
+            "properties": {
+              "validator": {
+                "title": "validator",
+                "type": "string"
+              },
+              "value": {
+                "title": "value",
+                "type": "boolean",
+                "format": "checkbox"
+              }
+            }
+          }
+        }
+      },
+      "dec_point": {
+        "title": "dec_point",
+        "type": "string"
+      },
+      "thousands_sep": {
+        "title": "thousands_sep",
+        "type": "string"
+      }
+    }
+  },
+  "productMarkers": {
+    "title": "productMarkers",
+    "type": "object",
+    "properties": {
+      "base": {
+        "title": "base",
+        "type": "string"
+      },
+      "mobile": {
+        "title": "mobile",
+        "type": "string"
+      },
+      "alternative": {
+        "title": "alternative",
+        "type": "string"
+      }
+    }
+  },
+  "merchantMarkers": {
+    "title": "merchantMarkers",
+    "type": "object",
+    "properties": {
+      "base": {
+        "title": "base",
+        "type": "string"
+      },
+      "mobile": {
+        "title": "mobile",
+        "type": "string"
+      }
+    }
+  },
+  "productPage": {
+    "title": "productPage",
+    "type": "object",
+    "properties": {
+      "featureSign": {
+        "title": "featureSign",
+        "type": "string"
+      },
+      "priceTags": {
+        "title": "priceTags",
+        "type": "object",
+        "properties": {
+          "specialPrice": {
+            "title": "specialPrice",
+            "type": "string"
+          },
+          "dealPrice": {
+            "title": "dealPrice",
+            "type": "string"
+          },
+          "salePrice": {
+            "title": "salePrice",
+            "type": "string"
+          }
+        }
+      },
+      "regularPrice": {
+        "title": "regularPrice",
+        "type": "string"
+      },
+      "stockTags": {
+        "title": "stockTags",
+        "type": "object",
+        "properties": {
+          "stock": {
+            "title": "stock",
+            "type": "string"
+          },
+          "stockFull": {
+            "title": "stockFull",
+            "type": "string"
+          },
+          "stockUsualDays": {
+            "title": "stockUsualDays",
+            "type": "string"
+          },
+          "stockUsualDaysQty": {
+            "title": "stockUsualDaysQty",
+            "type": "string"
+          },
+          "stockFullQty": {
+            "title": "stockFullQty",
+            "type": "string"
+          }
+        }
+      },
+      "titleTags": {
+        "title": "titleTags",
+        "type": "object",
+        "properties": {
+          "title": {
+            "title": "title",
+            "type": "string"
+          }
+        }
+      },
+      "productUrl": {
+        "title": "productUrl",
+        "type": "string"
+      },
+      "merchantUrlTag": {
+        "title": "merchantUrlTag",
+        "type": "string"
+      },
+      "searchUrl": {
+        "title": "searchUrl",
+        "type": "object",
+        "properties": []
+      },
+      "paths": {
+        "title": "paths",
+        "type": "object",
+        "properties": {
+          "stock": {
+            "title": "stock",
+            "type": "string"
+          },
+          "stockDropDownOptions": {
+            "title": "stockDropDownOptions",
+            "type": "string"
+          },
+          "title": {
+            "title": "title",
+            "type": "string"
+          },
+          "merchantInfo": {
+            "title": "merchantInfo",
+            "type": "string"
+          },
+          "addOn": {
+            "title": "addOn",
+            "type": "string"
+          },
+          "features": {
+            "title": "features",
+            "type": "string"
+          },
+          "content": {
+            "title": "content",
+            "type": "string"
+          },
+          "contentTableLabel": {
+            "title": "contentTableLabel",
+            "type": "string"
+          },
+          "contentTableValue": {
+            "title": "contentTableValue",
+            "type": "string"
+          },
+          "description": {
+            "title": "description",
+            "type": "string"
+          },
+          "category": {
+            "title": "category",
+            "type": "string"
+          },
+          "imagesHiRes": {
+            "title": "imagesHiRes",
+            "type": "string"
+          },
+          "imagesLarge": {
+            "title": "imagesLarge",
+            "type": "string"
+          },
+          "imagesMain": {
+            "title": "imagesMain",
+            "type": "string"
+          },
+          "imagesStartTag": {
+            "title": "imagesStartTag",
+            "type": "string"
+          },
+          "imagesEndTag": {
+            "title": "imagesEndTag",
+            "type": "string"
+          },
+          "mpnTag": {
+            "title": "mpnTag",
+            "type": "string"
+          },
+          "madeby": {
+            "title": "madeby",
+            "type": "string"
+          },
+          "deliveryData": {
+            "title": "deliveryData",
+            "type": "string"
+          },
+          "customerReviews": {
+            "title": "customerReviews",
+            "type": "string"
+          },
+          "fastTrack": {
+            "title": "fastTrack",
+            "type": "string"
+          }
+        }
+      },
+      "skip": {
+        "title": "skip",
+        "type": "object",
+        "properties": {
+          "rank": {
+            "title": "rank",
+            "type": "string"
+          },
+          "reviews": {
+            "title": "reviews",
+            "type": "string"
+          },
+          "amazonBusiness": {
+            "title": "amazonBusiness",
+            "type": "string"
+          },
+          "dateFirst": {
+            "title": "dateFirst",
+            "type": "string"
+          },
+          "asin": {
+            "title": "asin",
+            "type": "string"
+          },
+          "rankDE": {
+            "title": "rankDE",
+            "type": "string"
+          },
+          "reviewsDE": {
+            "title": "reviewsDE",
+            "type": "string"
+          }
+        }
+      },
+      "dec_point": {
+        "title": "dec_point",
+        "type": "string"
+      },
+      "thousands_sep": {
+        "title": "thousands_sep",
+        "type": "string"
+      },
+      "try_smid_to_m_tag": {
+        "title": "try_smid_to_m_tag",
+        "type": "boolean",
+        "format": "checkbox"
+      }
+    }
+  },
+  "attributes": {
+    "title": "attributes",
+    "type": "object",
+    "properties": {
+      "checkWeight": {
+        "title": "checkWeight",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "weightLimit": {
+        "title": "weightLimit",
+        "type": "string"
+      },
+      "checkDimension": {
+        "title": "checkDimension",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "dimensionLimit": {
+        "title": "dimensionLimit",
+        "type": "string"
+      },
+      "weight": {
+        "title": "weight",
+        "type": "object",
+        "properties": {
+          "regular": {
+            "title": "regular",
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "type",
+                "type": "string"
+              },
+              "label": {
+                "title": "label",
+                "type": "string"
+              },
+              "containerpath": {
+                "title": "containerpath",
+                "type": "string"
+              },
+              "valuepath": {
+                "title": "valuepath",
+                "type": "string"
+              },
+              "labelpath": {
+                "title": "labelpath",
+                "type": "string"
+              }
+            }
+          },
+          "type2": {
+            "title": "type2",
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "type",
+                "type": "string"
+              },
+              "label": {
+                "title": "label",
+                "type": "string"
+              },
+              "containerpath": {
+                "title": "containerpath",
+                "type": "string"
+              },
+              "action": {
+                "title": "action",
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "shippingWeight": {
+        "title": "shippingWeight",
+        "type": "object",
+        "properties": {
+          "regular": {
+            "title": "regular",
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "type",
+                "type": "string"
+              },
+              "label": {
+                "title": "label",
+                "type": "string"
+              },
+              "containerpath": {
+                "title": "containerpath",
+                "type": "string"
+              },
+              "valuepath": {
+                "title": "valuepath",
+                "type": "string"
+              },
+              "labelpath": {
+                "title": "labelpath",
+                "type": "string"
+              }
+            }
+          },
+          "type2": {
+            "title": "type2",
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "type",
+                "type": "string"
+              },
+              "label": {
+                "title": "label",
+                "type": "string"
+              },
+              "containerpath": {
+                "title": "containerpath",
+                "type": "string"
+              },
+              "action": {
+                "title": "action",
+                "type": "string"
+              }
+            }
+          },
+          "type3": {
+            "title": "type3",
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "type",
+                "type": "string"
+              },
+              "label": {
+                "title": "label",
+                "type": "string"
+              },
+              "containerpath": {
+                "title": "containerpath",
+                "type": "string"
+              },
+              "action": {
+                "title": "action",
+                "type": "string"
+              }
+            }
+          },
+          "tableOverview1": {
+            "title": "tableOverview1",
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "type",
+                "type": "string"
+              },
+              "label": {
+                "title": "label",
+                "type": "string"
+              },
+              "containerpath": {
+                "title": "containerpath",
+                "type": "string"
+              },
+              "valuepath": {
+                "title": "valuepath",
+                "type": "string"
+              },
+              "labelpath": {
+                "title": "labelpath",
+                "type": "string"
+              },
+              "replaces": {
+                "title": "replaces",
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "productDimensions": {
+        "title": "productDimensions",
+        "type": "object",
+        "properties": {
+          "regular": {
+            "title": "regular",
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "type",
+                "type": "string"
+              },
+              "label": {
+                "title": "label",
+                "type": "string"
+              },
+              "containerpath": {
+                "title": "containerpath",
+                "type": "string"
+              },
+              "valuepath": {
+                "title": "valuepath",
+                "type": "string"
+              },
+              "labelpath": {
+                "title": "labelpath",
+                "type": "string"
+              },
+              "replaces": {
+                "title": "replaces",
+                "type": "string"
+              }
+            }
+          },
+          "regular2": {
+            "title": "regular2",
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "type",
+                "type": "string"
+              },
+              "label": {
+                "title": "label",
+                "type": "string"
+              },
+              "containerpath": {
+                "title": "containerpath",
+                "type": "string"
+              },
+              "valuepath": {
+                "title": "valuepath",
+                "type": "string"
+              },
+              "labelpath": {
+                "title": "labelpath",
+                "type": "string"
+              },
+              "replaces": {
+                "title": "replaces",
+                "type": "string"
+              }
+            }
+          },
+          "type3": {
+            "title": "type3",
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "type",
+                "type": "string"
+              },
+              "label": {
+                "title": "label",
+                "type": "string"
+              },
+              "containerpath": {
+                "title": "containerpath",
+                "type": "string"
+              },
+              "action": {
+                "title": "action",
+                "type": "string"
+              },
+              "replaces": {
+                "title": "replaces",
+                "type": "string"
+              }
+            }
+          },
+          "table5": {
+            "title": "table5",
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "type",
+                "type": "string"
+              },
+              "label": {
+                "title": "label",
+                "type": "string"
+              },
+              "containerpath": {
+                "title": "containerpath",
+                "type": "string"
+              },
+              "valuepath": {
+                "title": "valuepath",
+                "type": "string"
+              },
+              "labelpath": {
+                "title": "labelpath",
+                "type": "string"
+              },
+              "replaces": {
+                "title": "replaces",
+                "type": "string"
+              }
+            }
+          },
+          "table4": {
+            "title": "table4",
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "type",
+                "type": "string"
+              },
+              "label": {
+                "title": "label",
+                "type": "string"
+              },
+              "containerpath": {
+                "title": "containerpath",
+                "type": "string"
+              },
+              "valuepath": {
+                "title": "valuepath",
+                "type": "string"
+              },
+              "labelpath": {
+                "title": "labelpath",
+                "type": "string"
+              },
+              "replaces": {
+                "title": "replaces",
+                "type": "string"
+              }
+            }
+          },
+          "regular3": {
+            "title": "regular3",
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "type",
+                "type": "string"
+              },
+              "label": {
+                "title": "label",
+                "type": "string"
+              },
+              "containerpath": {
+                "title": "containerpath",
+                "type": "string"
+              },
+              "valuepath": {
+                "title": "valuepath",
+                "type": "string"
+              },
+              "labelpath": {
+                "title": "labelpath",
+                "type": "string"
+              },
+              "replaces": {
+                "title": "replaces",
+                "type": "string"
+              }
+            }
+          },
+          "type5": {
+            "title": "type5",
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "type",
+                "type": "string"
+              },
+              "label": {
+                "title": "label",
+                "type": "string"
+              },
+              "containerpath": {
+                "title": "containerpath",
+                "type": "string"
+              },
+              "action": {
+                "title": "action",
+                "type": "string"
+              },
+              "replaces": {
+                "title": "replaces",
+                "type": "string"
+              }
+            }
+          },
+          "regular22": {
+            "title": "regular22",
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "type",
+                "type": "string"
+              },
+              "label": {
+                "title": "label",
+                "type": "string"
+              },
+              "containerpath": {
+                "title": "containerpath",
+                "type": "string"
+              },
+              "valuepath": {
+                "title": "valuepath",
+                "type": "string"
+              },
+              "labelpath": {
+                "title": "labelpath",
+                "type": "string"
+              },
+              "replaces": {
+                "title": "replaces",
+                "type": "string"
+              }
+            }
+          },
+          "table3": {
+            "title": "table3",
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "type",
+                "type": "string"
+              },
+              "label": {
+                "title": "label",
+                "type": "string"
+              },
+              "containerpath": {
+                "title": "containerpath",
+                "type": "string"
+              },
+              "valuepath": {
+                "title": "valuepath",
+                "type": "string"
+              },
+              "labelpath": {
+                "title": "labelpath",
+                "type": "string"
+              },
+              "replaces": {
+                "title": "replaces",
+                "type": "string"
+              }
+            }
+          },
+          "table6": {
+            "title": "table6",
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "type",
+                "type": "string"
+              },
+              "label": {
+                "title": "label",
+                "type": "string"
+              },
+              "containerpath": {
+                "title": "containerpath",
+                "type": "string"
+              },
+              "valuepath": {
+                "title": "valuepath",
+                "type": "string"
+              },
+              "labelpath": {
+                "title": "labelpath",
+                "type": "string"
+              },
+              "replaces": {
+                "title": "replaces",
+                "type": "string"
+              }
+            }
+          },
+          "type2": {
+            "title": "type2",
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "type",
+                "type": "string"
+              },
+              "label": {
+                "title": "label",
+                "type": "string"
+              },
+              "containerpath": {
+                "title": "containerpath",
+                "type": "string"
+              },
+              "action": {
+                "title": "action",
+                "type": "string"
+              },
+              "replaces": {
+                "title": "replaces",
+                "type": "string"
+              }
+            }
+          },
+          "type4": {
+            "title": "type4",
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "type",
+                "type": "string"
+              },
+              "label": {
+                "title": "label",
+                "type": "string"
+              },
+              "containerpath": {
+                "title": "containerpath",
+                "type": "string"
+              },
+              "action": {
+                "title": "action",
+                "type": "string"
+              },
+              "replaces": {
+                "title": "replaces",
+                "type": "string"
+              }
+            }
+          },
+          "tableOverview1": {
+            "title": "tableOverview1",
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "type",
+                "type": "string"
+              },
+              "label": {
+                "title": "label",
+                "type": "string"
+              },
+              "containerpath": {
+                "title": "containerpath",
+                "type": "string"
+              },
+              "valuepath": {
+                "title": "valuepath",
+                "type": "string"
+              },
+              "labelpath": {
+                "title": "labelpath",
+                "type": "string"
+              },
+              "replaces": {
+                "title": "replaces",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

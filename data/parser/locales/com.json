@@ -1,0 +1,205 @@
+{
+  "settings": {
+    "baseUrl": "https:\/\/www.amazon.com\/",
+    "amazonMerchantId": "ATVPDKIKX0DER",
+    "magentoControlUrl": "http:\/\/apm.webandpeople.com\/index.php\/amazonimportproducts\/index\/parser",
+    "magentoControlPass": "secret_key",
+    "locale": "com",
+    "amazon_key": "",
+    "amazon_secret": "",
+    "amazon_tag": "",
+    "amazon_responseGroup": "Small,ItemAttributes",
+    "amazon_fields": {
+      "mpn": "MPN",
+      "ean": "EAN",
+      "upc": "UPC",
+      "model": "Model",
+      "manufacturer": "Manufacturer",
+      "short_description": "Feature",
+      "brand": "Brand",
+      "size": "Size",
+      "item_dimensions": "ItemDimensions",
+      "package_dimensions": "PackageDimensions"
+    },
+    "preferredCountry": "Canada,United States",
+    "browserHeader": {
+      "Accept-Language": "en,en-US;q=0.7,en;q=0.3",
+      "Accept": "text\/html,application\/xhtml+xml,application\/xml;q=0.9,*\/*;q=0.8"
+    },
+    "checkOfferCookie": true,
+    "checkCamel": false
+  },
+  "offersPage": {
+    "offerUrl": "gp\/offer-listing\/{ASIN}\/ref=olp_f_freeShipping?ie=UTF8&language=en_US",
+    "tags": {
+      "primeTag": "&f_primeEligible=true",
+      "newTag": "&condition=new",
+      "freeshippingTag": "&f_freeShipping=true"
+    },
+    "freeShippingTag": "&f_freeShipping=true",
+    "sellerTag": "&m={seller}",
+    "paths": {
+      "offer": ".\/\/div[contains(concat(' ', @class, ' '), 'olpOffer')]",
+      "price": ".\/\/span[contains(concat(' ', @class, ' '), 'olpOfferPrice')]",
+      "prime": ".\/\/div[contains(concat(' ', @class, ' '), 'olpBadge')]",
+      "prime2": ".\/\/i[contains(concat(' ', @class, ' '), 'a-icon-prime')]",
+      "shipping": ".\/\/p[@class='olpShippingInfo']",
+      "condition": ".\/\/span[contains(concat(' ', @class, ' '), ' olpCondition ')]",
+      "offerID": ".\/\/input[contains(concat(' ', @name, ' '), 'offeringID')]",
+      "seller": ".\/\/div[contains(concat(' ', @class, ' '), ' olpSellerColumn')]\/\/a",
+      "sellerName": ".\/\/h3[contains(concat(' ', @class, ' '), ' olpSellerName')]\/span\/a",
+      "delivery": ".\/\/div[contains(concat(' ', @class, ' '), ' olpDeliveryColumn')]",
+      "fba": "Fulfillment by Amazon",
+      "isAddon": ".\/\/i[contains(concat(' ', @class, ' '), 'a-icon-addon')]"
+    },
+    "skip": {
+      "isAddon": {
+        "validator": "strlen_positive",
+        "value": true
+      },
+      "prime": {
+        "validator": "positive",
+        "value": false
+      }
+    }
+  },
+  "productMarkers": {
+    "base": "\/\/form[@id=\"addToCart\"]\/\/*[@name=\"ASIN\"]\/@value",
+    "mobile": "\/\/form[@id=\"buyNow\"]\/\/*[@name=\"asin\"]\/@value",
+    "alternative": "\/\/link[@rel=\"canonical\"]\/@href"
+  },
+  "merchantMarkers": {
+    "base": "\/\/form[@id=\"addToCart\"]\/\/*[@name=\"merchantID\"]\/@value",
+    "mobile": "\/\/input[@id=\"ftSelectMerchant\"]\/@value"
+  },
+  "productPage": {
+    "priceTags": {
+      "specialPrice": ".\/\/*[@id='priceblock_ourprice']",
+      "dealPrice": ".\/\/*[@id='priceblock_dealprice']",
+      "salePrice": ".\/\/*[@id='priceblock_saleprice']"
+    },
+    "regularPrice": ".\/\/*[@id='price']\/\/span[contains(concat(' ', @class, ' '), 'priceBlockStrikePriceString')]",
+    "stockTags": {
+      "stock": "\/Only ([0-9]+) left in stock\/",
+      "stockFull": "In Stock.",
+      "stockFullQty": "20"
+    },
+    "titleTags": {
+      "title": ".\/\/*[@id='productTitle']"
+    },
+    "productUrl": "dp\/{ASIN}?ie=UTF8&psc=1",
+    "merchantUrlTag": "&smid={MerchantId}",
+    "paths": {
+      "stock": ".\/\/*[@id='availability']\/span",
+      "stockDropDownOptions": ".\/\/select[@id='quantity']\/option",
+      "title": ".\/\/*[@id='productTitle']",
+      "merchantInfo": ".\/\/*[@id='merchant-info']",
+      "addOn": ".\/\/*[@id='addOnItem_feature_div']",
+      "features": ".\/\/*[@id='feature-bullets']\/ul\/li",
+      "content": ".\/\/*[@class='content']\/ul\/li",
+      "contentTableLabel": ".\/\/div[@id='prodDetails']\/\/tr\/td[@class='label']",
+      "contentTableValue": ".\/\/div[@id='prodDetails']\/\/tr\/td[@class='value']",
+      "description": ".\/\/*[@id='productDescription']\/p",
+      "category": "\/\/div[@id='wayfinding-breadcrumbs_container']\/\/a",
+      "imagesHiRes": "\/\"hiRes\":\"(https:\\\/\\\/[a-zA-Z0-9\\-\\.\\_\\\/]+)\"\/",
+      "imagesLarge": "\/\"large\":\"(https:\\\/\\\/[a-zA-Z0-9\\-\\.\\_\\\/]+)\"\/",
+      "imagesMain": "\/\"main\":\"(https:\\\/\\\/[a-zA-Z0-9\\-\\.\\_\\\/]+)\"\/",
+      "imagesStartTag": "var data =",
+      "imagesEndTag": "};",
+      "mpnTag": "Item model number:",
+      "madeby": ".\/\/div[@id='bylineInfo_feature_div']\/\/a",
+      "deliveryData": ".\/\/div[@id='ddmDeliveryMessage']",
+      "offerUrl": ".\/\/div[@id='olp_feature_div']\/\/a\/@href",
+      "customerReviews": ".\/\/span[@id='acrCustomerReviewText']",
+      "fastTrack": ".\/\/div[@id='fast-track-message']\/div"
+    },
+    "skip": {
+      "rank": "Amazon Bestsellers Rank"
+    },
+    "searchUrl": []
+  },
+  "attributes": {
+    "checkWeight": true,
+    "weightLimit": "1000",
+    "checkDimension": true,
+    "dimensionLimit": "7500",
+    "weight": {
+      "regular": {
+        "type": "table",
+        "label": "Item Weight",
+        "containerpath": ".\/\/tr[@class='size-weight']",
+        "valuepath": ".\/td[@class='value']",
+        "labelpath": ".\/td[@class='label']"
+      },
+      "type1": {
+        "type": "table",
+        "label": "Item Weight",
+        "containerpath": "\n                    .\/\/table[contains(concat(' ', @class, ' '), 'prodDetTable')]\/tr",
+        "valuepath": ".\/td[contains(concat(' ', @class, ' '), 'a-size-base')]",
+        "labelpath": ".\/th[contains(concat(' ', @class, ' '), 'prodDetSectionEntry')]"
+      },
+      "type2": {
+        "type": "ul",
+        "label": "Item Weight:",
+        "containerpath": ".\/\/table[@id='productDetailsTable']\/\/li",
+        "action": "replace-label"
+      }
+    },
+    "shippingWeight": {
+      "regular": {
+        "type": "table",
+        "label": "Shipping Weight",
+        "containerpath": ".\/\/tr[@class='shipping-weight']",
+        "valuepath": ".\/td[@class='value']",
+        "labelpath": ".\/td[@class='label']"
+      },
+      "type2": {
+        "type": "ul",
+        "label": "Boxed-product Weight:",
+        "containerpath": ".\/\/table[@id='productDetailsTable']\/\/li",
+        "action": "replace-label"
+      },
+      "type3": {
+        "type": "ul",
+        "label": "Boxed-product Weight:",
+        "containerpath": ".\/\/div[@id='detail_bullets_id']\/\/li",
+        "action": "replace-label"
+      }
+    },
+    "productDimensions": {
+      "regular": {
+        "type": "table",
+        "label": "Product Dimensions",
+        "containerpath": ".\/\/tr[@class='size-weight']",
+        "valuepath": ".\/td[@class='value']",
+        "labelpath": ".\/td[@class='label']"
+      },
+      "type1": {
+        "type": "table",
+        "label": "Product Dimensions",
+        "containerpath": "\n                    .\/\/table[contains(concat(' ', @class, ' '), 'prodDetTable')]\/tr",
+        "valuepath": ".\/td[contains(concat(' ', @class, ' '), 'a-size-base')]",
+        "labelpath": ".\/th[contains(concat(' ', @class, ' '), 'prodDetSectionEntry')]"
+      },
+      "regular2": {
+        "type": "table",
+        "label": "Package Dimensions",
+        "containerpath": ".\/\/tr[@class='size-weight']",
+        "valuepath": ".\/td[@class='value']",
+        "labelpath": ".\/td[@class='label']"
+      },
+      "type2": {
+        "type": "ul",
+        "label": "Product Dimensions:",
+        "containerpath": ".\/\/table[@id='productDetailsTable']\/\/li",
+        "action": "replace-label"
+      },
+      "type3": {
+        "type": "ul",
+        "label": "Product Dimensions:",
+        "containerpath": ".\/\/div[@id='detail_bullets_id']\/\/li",
+        "action": "replace-label"
+      }
+    }
+  }
+}

@@ -1,0 +1,866 @@
+<?php /** @noinspection UnserializeExploitsInspection */
+
+/**
+ * Copyright WebExperiment.info
+ * Created by ernazar.
+ * Date: 06.03.2017
+ * Time: 23:39
+ */
+
+namespace Parser\Controller;
+
+
+use Parser\Model\Amazon\Camel\Extractor;
+use Parser\Model\Amazon\Product as Amroduct;
+use Parser\Model\Amazon\ProductMarker;
+use Parser\Model\Configuration\ProductSyncable;
+use Parser\Model\Helper\Config;
+use Parser\Model\Helper\Helper;
+use Parser\Model\Helper\Logger;
+use Parser\Model\Helper\ProcessLimiter;
+use Parser\Model\Magento\Connector;
+use Parser\Model\Product;
+use Parser\Model\ProductDetails;
+use Parser\Model\ProductSync;
+use Parser\Model\Web\Browser;
+use Parser\Model\Web\Cookie;
+use Parser\Model\Web\Proxy;
+use Parser\Model\Web\ProxySource\File;
+use Parser\Model\Web\ProxySource\ProxyScraper;
+use Parser\Model\Web\UserAgent;
+use Parser\Model\Web\WebClient;
+use Parser\Model\Web\ProxySource\ProxySource;
+use yii\web\View;
+use Laminas\Cache\Storage\Adapter\Redis;
+use Laminas\Cache\Storage\Plugin\ExceptionHandler;
+use Laminas\Console\Request as ConsoleRequest;
+use Laminas\Db\Sql\Sql;
+use Laminas\Db\Sql\Where;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
+use GuzzleHttp\Client;
+
+
+/**
+ * Class ListController
+ * @package Parser\Controller
+ * @inheritdoc
+ */
+class ListController extends AbstractController
+{
+    private $db;
+    private $container;
+    /* @var $proxy Proxy */
+    private $proxy;
+    private $userAgent;
+
+    public function __construct(Config $config, $container)
+    {
+        /**
+         * @var $proxy Proxy
+         */
+        $this->container = $container;
+        $this->proxy = $this->container->get(Proxy::class);
+        /**
+         * @var $userAgent UserAgent
+         */
+        $userAgent = $this->container->get(UserAgent::class);
+        $this->userAgent = $userAgent;
+        $this->config = $config;
+        $this->db = $this->config->getDb();
+        $this->authActions = ['list', 'testProxy'];
+
+    }
+
+    /**
+     * @return JsonModel|ViewModel
+     * @throws \Exception
+     */
+    public function parseAction()
+    {
+        $request = $this->getRequest();
+        if ($request instanceof ConsoleRequest) {
+            $locale = $request->getParam('locale', 'ca');
+            $asin = $request->getParam('asin');
+            $mode = $request->getParam('mode', 'array');
+            $save = $request->getParam('save', '1');
+            $debug = $request->getParam('debug');
+            $offersOnly = $request->getParam('offersOnly');
+        } else {
+            $locale = $this->params()->fromQuery('locale', 'ca');
+            $asin = $this->params()->fromQuery('asin');
+            $mode = $this->params()->fromQuery('mode', 'array');
+            $save = $this->params()->fromQuery('save', '1');
+            $debug = $this->params()->fromQuery('debug');
+            $offersOnly = $this->params()->fromQuery('offersOnly');
+
+
+        }
+        $timeStart = microtime(1);
+        // reading config xml file
+        $config = Helper::loadConfig('data/parser/config/config.xml');
+        [$asin, $parseMode, $offersMaxPrice] = Helper::routeGetParseMode($asin);
+        $parseMode = Helper::routeMatchParseMode($parseMode, $locale);
+        if ($offersMaxPrice) {
+            $this->config->registerSettingOverride('offersMaxPrice', $offersMaxPrice);
+        }
+        $this->config->registerSettingOverride($parseMode);
+        $this->config->setProperty('DebugMode', $debug);
+
+        // check if there is a param offersOnly and override settings
+
+        $processOnlyOffers = $offersOnly !== null ? (bool)$offersOnly : ($config['settings']['processOnlyOffers'] ?? false);
+        // do not check for proxy overuse for manual check.
+        $this->proxy->setOveruse(true);
+        $product = new Product($this->config, $this->proxy, $this->userAgent, $asin, $locale);
+        $productWasInDb = true;
+        if (!$product->checkExist($asin, $locale)) {
+            $productWasInDb = false;
+            $product->add($asin, $locale, ['syncable' => ProductSyncable::SYNCABLE_YES]);
+        }
+        if (!$product->hasErrors()) {
+            // process magento requests right now if true
+            //            $product->setInstantProcessing(true);
+            $product->setProcessOnlyOffers($processOnlyOffers);
+            $product->sync();
+        }
+
+        if (!$product->hasErrors()) {
+            $productData = $product->getProperties();
+        } else {
+            $productData = ['errors' => $product->getErrors()];
+        }
+
+        $timeEnd = microtime(1);
+        $productData['parsingTime (ms)'] = (int)(1000 * ($timeEnd - $timeStart));
+        if (!$save && !$productWasInDb) {
+            $product->deleteList(['asin' => $asin, 'locale' => $locale]);
+        }
+        $productData = $product::getOrderedFields($productData);
+        if ($processOnlyOffers) {
+            // return only offers json.
+            $dataToShow = isset($productData['offers_data']) ? unserialize($productData['offers_data']) : [];
+        } else {
+            $dataToShow = [
+                'items' => $productData,
+                'productUrl' => $productData['productUrl'] ?? '',
+//                'content' => $product->content,
+            ];
+            if ($mode === 'json') {
+                $dataToShow = $productData;
+            }
+        }
+        if ($request instanceof ConsoleRequest) {
+            pr($dataToShow);
+        } else {
+            if ($mode === 'array') {
+                $result = new ViewModel($dataToShow);
+                $result->setTerminal(true);
+            } else {
+                $result = new JsonModel($dataToShow);
+            }
+            return $result;
+        }
+    }
+
+
+    /**
+     * @return \Laminas\Db\Adapter\Driver\ResultInterface|ViewModel
+     * @throws \Exception
+     */
+
+    public function syncAction()
+    {
+        ini_set('ignore_user_abort', 1);
+        // manual sync start in development stage
+        $dataKey = $this->params()->fromQuery('key', '');
+        //if (!$dataKey) die();
+        // delay a sync run if multiple cron commands are running every minute.
+        $delay = $this->params()->fromQuery('a', '');
+        // debug mode
+        $debugMode = $this->params()->fromQuery('debug', '');
+
+
+        $this->config->setProperty('DebugMode', $debugMode);
+        if ($delay) {
+            sleep($delay * 3);
+        }
+
+        $config = Helper::loadConfig('data/parser/config/config.xml');
+
+        $processExpireDelay = $config['settings']['processExpireDelay'] ?? 240;
+        // the limit of active proxy connections allowed
+        // !modify all three options in the data/parser/config/config.xml file
+        //$activeConnectionsLimit = (int)$config['settings']['activeConnections'] * $productSyncLimit / 2;
+        $activeConnectionsLimit = (int)($config['settings']['activeConnections'] ?? 10);
+
+        $regularSyncPath = ($config['settings']['processId'] ?? 'amazon_product');
+
+        $limiter = new ProcessLimiter($this->config, [
+            'path' => $regularSyncPath,
+            'expireTime' => $processExpireDelay,
+            'processLimit' => $activeConnectionsLimit,
+        ]);
+        $syncedProducts = [];
+        if (($limiterID = $limiter->initializeProcess()) && $this->proxy->loadAvailableProxy()) {
+            $productSync = new ProductSync($this->config);
+            try {
+                $syncedProducts = $productSync->cronSyncProducts($limiter);
+            } catch (\Exception $e) {
+                Helper::logException($e, 'cronSync.error.log');
+            }
+            $message = $productSync->getStringMessages();
+            $limiter->delete(['process_limiter_id' => $limiterID]);
+        } else {
+            $message = 'Active Connections limit reached, try to start sync later';
+            $syncedProducts = [];
+        }
+
+        $result = new ViewModel([
+            'items' => $syncedProducts,
+            'message' => $message,
+        ]);
+        $result->setTerminal(true);
+        return $result;
+    }
+
+    public function consolesyncAction()
+    {
+        $request = $this->getRequest();
+        $dataKey = $request->getParam('key', '');
+        // delay a sync run if multiple cron commands are running every minute.
+        $delay = $request->getParam('delay');
+        // debug mode
+        $debugMode = $request->getParam('debug');
+        //if (!$dataKey) die();
+        $this->config->setProperty('DebugMode', $debugMode);
+        if ($delay) {
+            sleep($delay * 3);
+        }
+        $config = Helper::loadConfig('data/parser/config/config.xml');
+        $processExpireDelay = $config['settings']['processExpireDelay'] ?? 240;
+        $activeConnectionsLimit = (int)($config['settings']['activeConnections'] ?? 10);
+        $regularSyncPath = ($config['settings']['processId'] ?? 'amazon_product');
+        $limiter = new ProcessLimiter($this->config, [
+            'path' => $regularSyncPath,
+            'expireTime' => $processExpireDelay,
+            'processLimit' => $activeConnectionsLimit,
+        ]);
+        $syncedProducts = [];
+//        $this->proxy->setAllowedGroups(['tor']);
+        if (!$this->proxy->loadAvailableProxy()) {
+            $message = $this->proxy->getStringErrorMessages();
+        } elseif (($limiterID = $limiter->initializeProcess())) {
+            $productSync = new ProductSync($this->config);
+            try {
+                $syncedProducts = $productSync->cronSyncProducts($limiter);
+                $message = $productSync->getStringMessages();
+            } catch (\Exception $e) {
+                Helper::logException($e, 'cronConsoleSync.error.log');
+                $message = $e->getMessage();
+            }
+            $limiter->delete(['process_limiter_id' => $limiterID]);
+        } else {
+            $message = 'Active Connections limit reached, try to start sync later';
+            $syncedProducts = [];
+        }
+        $data = [
+            'items' => $syncedProducts,
+            'message' => $message,
+        ];
+        pr($data);
+
+        return $this->zeroTemplate();
+    }
+
+    public function cleanAction(): ViewModel
+    {
+        $data = Helper::cleanDb($this->db, $this->config);
+        $result = new ViewModel([
+            'data' => $data,
+        ]);
+        $result->setTerminal(true);
+        return $result;
+    }
+
+    public function connectReverseAction()
+    {
+        $dataKey = $this->params()->fromQuery('key', '');
+        $keep = $this->params()->fromQuery('keep', '');
+        $result = [];
+        $message = '';
+        if (!$dataKey) {
+            $message = 'no key specified';
+        } else {
+            $path = 'data/content/';
+            if (file_exists($path . $dataKey) && strlen($dataKey) <= 8) {
+                // we have a file
+
+                $fileContent = file_get_contents($path . $dataKey);
+                // Get file size in bytes
+                if (!$keep) {
+                    @unlink($path . $dataKey);
+                }
+
+                $fileSize = strlen($fileContent);
+
+                // Write HTTP headers
+                $response = $this->getResponse();
+                $headers = $response->getHeaders();
+                $headers->addHeaderLine(
+                    'Content-type: application/octet-stream');
+                $headers->addHeaderLine(
+                    'Content-Disposition: attachment; filename="products_' . date('Y-m-d-h-i-s') . '.csv"');
+                $headers->addHeaderLine('Content-length: ' . $fileSize);
+                $headers->addHeaderLine('Cache-control: private');
+
+                // Write file content
+                if ($fileContent !== false) {
+                    $response->setContent($fileContent);
+                } else {
+                    // Set 500 Server Error status code
+                    $this->getResponse()->setStatusCode(500);
+                    $this->getRequest()->setContent('Please choose products');
+                    return;
+                }
+                // Return Response to avoid default view rendering
+                return $this->getResponse();
+            } else {
+                $message = 'no key file found';
+            }
+        }
+
+        $result['message'] = $message;
+        echo json_encode($result);
+        $view = new ViewModel([
+        ]);
+        $view->setTerminal(true);
+        return $view;
+    }
+
+    public function checkMissingFieldsAction(): void
+    {
+        $config = Helper::loadConfig("data/parser/config/config.xml");
+        $locale = $this->params()->fromQuery("locale", "ca");
+        $localeConfig = Helper::loadConfig("data/parser/config/profile/" . $locale . ".xml");
+        $amRoduct = new Amroduct($localeConfig, $this->db);
+        $count = $amRoduct->checkMissingAttribute(['title' => 'Title'], $locale);
+        die($count);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function blowAction(): void
+    {
+        $url = 'https://amazon-parser.web-experiment.info/blow.php';
+//        $url = 'https://www.amazon.co.uk/dp/B00HNTDL70/ref=br_asw_pdt-4?ie=UTF8&psc=1&m=A3P5ROKL5A1OLE';
+
+        $this->proxy->loadAvailableProxy();
+        $browser = new Browser($url, $this->proxy, $this->userAgent, []);
+        // browser tries to get the content, if required several attempts will be performed with proxy/user agent changes.
+        $content = $browser->getAdvancedPage()->getContent();
+        //$browser->setProperty('Referer', "https://amazon-parser.web-experiment.info/");
+        //$content = ($content);
+        echo "<pre><textarea style='width: 100%;height:100%;'>";
+
+        echo $content;
+        echo "</textarea>";
+        die();
+
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function camelAction(): void
+    {
+        $url = 'https://ca.camelcamelcamel.com/product/B00THLKTZE';
+//        $url = 'https://ca.camelcamelcamel.com/Encased%C2%AE-Holster-Spigen-Samsung-Galaxy/product/B00THLKTZE';
+
+        $this->proxy->loadAvailableProxy();
+        $browser = new Browser($url, $this->proxy, $this->userAgent, ['debugMode' => 1]);		
+        $browser->setProperty('UserAgentId', 2889);
+        // browser tries to get the content, if required several attempts will be performed with proxy/user agent changes.
+        $content = $browser->getAdvancedPage()->getContent();
+
+//        $camel = new Extractor('ca', 'B001NXDQNG', $this->config);
+//        $data = $camel->getProductData(0);
+//        pr($data);
+        //        gzuncompress($data['data']['content']));
+//        $camel->resetHangingProducts();
+        die();
+    }
+
+
+    public function demoAction(): void
+    {
+        echo '<pre>';
+        $path = 'data/content/3978.d';
+
+        $content = file_get_contents($path);
+        $data = gzuncompress($content);
+        print_r($data);
+        die();
+
+    }
+
+    public function testDomAction(): ViewModel
+    {
+
+        $path = 'data/content/739ae615c06b9e92d2110ebf39be684a.html';
+        $content = file_get_contents($path);
+        $data = ['content size' => strlen($content)];
+
+        $timeStart = microtime(1);
+        for ($i = 1; $i < 100; $i++) {
+            $title = Helper::_getContentFromHTMLbyXpath($content, ".//*[@id='productTitle']");
+        }
+        $timeEnd = microtime(1);
+        $timeSpent = (int)(1000 * ($timeEnd - $timeStart));
+        $data['slowTime'] = $timeSpent;
+
+        $timeStart = microtime(1);
+        $dom = new \DOMDocument('1.0', 'UTF-8');
+        @$dom->loadHTML($content);
+        $xpath = new \DOMXPath($dom);
+        for ($i = 1; $i < 100; $i++) {
+            $path = ".//*[@id='productTitle']";
+            $res = $xpath->query($path);
+            if ($res->length) {
+                $productDescription = "";
+                foreach ($res as $element) {
+                    $xDoc = new \DOMDocument('1.0', 'UTF-8');
+                    $cloned = @$element->cloneNode(true);
+                    $xDoc->appendChild($xDoc->importNode($cloned, true));
+                    $productDescription .= $xDoc->saveHTML();
+                }
+            }
+        }
+        $timeEnd = microtime(1);
+        $timeSpent = (int)(1000 * ($timeEnd - $timeStart));
+        $data['fastTime'] = $timeSpent;
+
+
+        $view = new ViewModel([
+            'data' => $data,
+        ]);
+        $view->setTerminal(false);
+        return $view;
+    }
+    /*
+        public function sqlAction(): void
+        {
+            echo '<pre>';
+            $current = '';
+            $currentData = unserialize($current);
+            //print_r($currentData);
+
+            $sql = new Sql($this->db);
+            $stmt = $sql->getAdapter()->getDriver()->createStatement();
+
+            $query = 'describe product';
+
+            $stmt->setSql($query);
+            $result = $stmt->execute();
+            $fields = [];
+            while ($result->current()) {
+                $item = $result->current();
+                $fields[$item['Field']] = $item;
+                $result->next();
+            }
+            $missing = [];
+            foreach ($currentData as $key => $field) {
+                if (!isset($fields[$key])) {
+                    $missing[$key] = $field;
+                }
+            }
+    //
+    //         * ALTER TABLE `product` ADD `updated_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `modified`;
+    //         * ALTER TABLE `product` CHANGE `price` `price` FLOAT( 10 ) NULL DEFAULT NULL;
+    //         * ALTER TABLE `product` ADD `enabled` TINYINT( 1 ) NOT NULL DEFAULT '1', ADD INDEX ( `enabled` );
+    //
+            //print_r($fields);
+            //print_r($missing);
+
+            foreach ($missing as $key => $field) {
+                if ($key == 'sync_log') {
+                    // change browserMessage
+                    $sqlQuery = 'ALTER TABLE `product` CHANGE `browserErrors` `sync_log` varchar( 512 ) NULL DEFAULT NULL';
+                } else {
+                    $sqlQuery = 'ALTER TABLE `product` ADD `' . $key . '` ' . $field['Type'];
+                    if ($field['Null'] == "YES") {
+                        $sqlQuery .= " NULL  DEFAULT NULL";
+                    }
+                    $sqlQuery .= " AFTER `toDelete`";
+                }
+                $stmt->setSql($sqlQuery);
+                $result = $stmt->execute();
+                print_r($result->current());
+                print_r($sqlQuery . "<br />");
+            }
+
+            $query = "DESCRIBE logger";
+
+            $stmt->setSql($query);
+            $result = $stmt->execute();
+            $fields = [];
+            while ($result->current()) {
+                $item = $result->current();
+                $fields[$item['Field']] = $item;
+                $result->next();
+            }
+            $missing = [];
+            foreach ($currentData as $key => $field) {
+                if (!isset($fields[$key])) {
+                    $missing[$key] = $field;
+                }
+            }
+            print_r($fields);
+
+            die();
+        }
+    */
+    /**
+     * @return \Laminas\Db\Adapter\Driver\ResultInterface|ViewModel
+     */
+    public function tpackAction()
+    {
+        /*
+         * SELECT email, created,ipn FROM `ipn_log`
+         * WHERE plimus_contract_id=2952676 AND status='charge' AND DATE_ADD(created, INTERVAL 2 YEAR) > NOW()
+         */
+        echo "<pre>";
+        $data = [];
+        $sql = new Sql($this->db);
+        $select = $sql->select('ipn_log')
+            ->columns([
+                'email',
+                'created',
+                'ipn',
+            ]);
+        $where = new Where();
+        $where->equalTo('status', 'charge');
+        $where->equalTo('plimus_contract_id', 2952676);
+        $where->greaterThan(new Expr('DATE_ADD(created, INTERVAL 2 YEAR)'), new Expr('NOW()'));
+        $select->where($where);
+
+        $stmt = $sql->prepareStatementForSqlObject($select);
+        $result = $stmt->execute();
+//        $tos = "email,lastname firstname\n";
+        $tos = "";
+        $ban = ['Krass'];
+        while ($data = $result->current()) {
+            //print_r($data);
+            $data['ipn'] = unserialize($data['ipn']);
+            if (!in_array($data['ipn']['customer_firstname'], $ban)) {
+                $row = [$data['ipn']['customer_firstname'], $data['email']];
+//            $row = [$data['email'], $data['ipn']['customer_lastname'] ." ". $data['ipn']['customer_firstname']];
+                $tos .= implode(' ', $row) . "\n";
+            }
+            $result->next();
+        }
+        print_r($tos);
+        die();
+        $result = new ViewModel([]);
+        $result->setTerminal(true);
+        return $result;
+    }
+
+    public function amroductAction(): ViewModel
+    {
+        $locale = $this->params()->fromQuery('locale', 'com');
+
+        $product = new Product($this->config, $this->proxy, $this->userAgent, '', $locale);
+        $localeList = $product->getLocales();
+        unset($localeList['-']);
+        $message = '';
+        $localeListKeys = array_keys($localeList);
+        $pathKey = (int)array_search($locale, $localeListKeys, true);
+        $limiter = new ProcessLimiter($this->config, [
+            'path' => 'amroduct_' . $pathKey,
+            'expireTime' => 256,
+            'processLimit' => 1,
+        ]);
+
+
+        if (!isset($localeList[$locale])) {
+            $message = 'wrong locale';
+        } elseif ($limiterID = $limiter->initializeProcess()) {
+            $localeConfig = $this->config->getLocaleConfig($locale);
+            $flow = new Amroduct($localeConfig, $this->db);
+            $list = $flow->getUnprocessedList($locale, 200);
+            $flow->getData($list);
+            $message = $flow->getStringErrorMessages();
+            $limiter->delete(['process_limiter_id' => $limiterID]);
+        } else {
+            $message = 'already running, please try later';
+        }
+        $result = new ViewModel(['messages' => $message]);
+        $result->setTerminal(true);
+        return $result;
+    }
+
+    public function amdisplayAction(): ViewModel
+    {
+        $config = Helper::loadConfig("data/parser/config/config.xml");
+        $locale = $this->params()->fromQuery("locale", "ca");
+        $asin = $this->params()->fromQuery("asin", "B003YKX6V8");
+        $localeConfig = Helper::loadConfig("data/parser/config/profile/" . $locale . ".xml");
+        $flow = new Amroduct($localeConfig, $this->db);
+        $data = $flow->loadProductFromDb($asin, $locale);
+
+        //pr($data);
+        $result = new ViewModel([]);
+        $result->setTerminal(true);
+        die();
+        return $result;
+    }
+
+    public function cleanEmptyParentsAction()
+    {
+        $sql = new Sql($this->config->getDb());
+        $query = "SELECT p.product_id FROM `product` p INNER JOIN `product` pp ON p.asin = pp.parent_asin WHERE (p.parent_asin IS NULL or p.parent_asin = '') GROUP BY p.asin";
+        $stmt = $sql->getAdapter()->getDriver()->createStatement();
+        $stmt->setSql($query);
+        $result = $stmt->execute();
+
+        while ($product = $result->current()) {
+            // we have such products, which are actually parents but without parent asin.
+            // we can set parent asin or remove them.
+            $result->next();
+            $id = $product['product_id'];
+            pr($id);
+            $delete = $sql->delete('parser_magento_product')->where(['product_id' => $id]);
+            $stmt = $sql->prepareStatementForSqlObject($delete);
+            $stmt->execute();
+
+            $delete = $sql->delete('product')->where(['product_id' => $id]);
+            $stmt = $sql->prepareStatementForSqlObject($delete);
+            $stmt->execute();
+            pr('deleted');
+
+        }
+
+        $result = new ViewModel([]);
+        $result->setTerminal(true);
+        $result->setTemplate('zero');
+        return $result;
+    }
+
+    public function testFileSaveAction(): ViewModel
+    {
+//        Connector::saveDataFile(['1' => 2, '3' => 4]);
+        $result = new ViewModel([]);
+        $result->setTemplate('zero')
+            ->setTerminal(true);
+        echo 'ok';
+        return $result;
+    }
+
+    /**
+     * @return ViewModel
+     */
+    public function testWebRequestAction(): ViewModel
+    {
+        // excellent code to run the guzzle requests with headers, cookies, proxies etc.
+        // NOTE! The headers order matters
+//        $url = 'http://mvc.webandpeople.com/parser/testWebResponse';
+//        $url = 'https://erovi.jp/list/md_search-%E5%93%80%E8%99%90%E3%81%AE%E3%82%A6%E3%82%A7%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E3%83%89%E3%83%AC%E3%82%B9+%E7%A9%A2%E3%81%95%E3%82%8C%E3%81%9F%E7%B4%94%E7%99%BD%E3%81%AE%E8%8A%B1%E5%AB%81%E3%81%9F%E3%81%A1.html';
+        $url = 'https://www.amazon.com/dp/B07JK68FT6?ie=UTF8&psc=1&smid=ATVPDKIKX0DER';
+
+        $config = [];
+        $client = new WebClient($config);
+
+        if ($this->proxy->loadAvailableProxy()) {
+            $client->setProxy($this->proxy);
+            $headers['UserAgent'] = $this->userAgent->getUserAgent();
+            $pageConfig['headers'] = $headers;
+            $pageConfig['cookieCacheKey'] = 'default-cache-key2';
+            $pageConfig['method'] = 'GET';
+            $request = $client->getPage($url, $pageConfig);
+            $proxyId = $client->getProxy()->getProperty('proxy_id');
+            if ($request) {
+                // that is how we can work with cookies.
+                $cookieCacheObject = new Cookie();
+                $cookie = $cookieCacheObject->getCookieFromCache('default-cache-key2');
+                pr($cookie);
+                pr($request->getStatusCode());
+                if (in_array($request->getStatusCode(), [200, 404], true) && $client->getProxy()->getProperty('tor_auth')) {
+                    // good tor result
+                    $client->setLastTorRequestResult(true, $proxyId);
+                }
+                pr($client->getLastTorRequestResult($proxyId));
+
+//                pr($request->getBody()->getContents());
+                // here you need to define if the result is ok or not, do additiona content checks and decide if additional requests are required.
+            } else {
+                // case when nothing was got, that is just proxy failure or other connection issue.
+                pr($client->lastCallError);
+            }
+        } else {
+            // no proxy available;
+            pr('no proxy available');
+        }
+        return $this->returnZeroTemplate();
+    }
+
+    /**
+     * function gives the request headers.
+     * @return ViewModel
+     */
+    public function testWebResponseAction(): ViewModel
+    {
+        $headers = apache_request_headers();
+        $responseHeaders = apache_response_headers();
+        $json = \GuzzleHttp\json_encode(['request' => $headers, 'response' => $responseHeaders]);
+        echo $json;
+        return $this->returnZeroTemplate();
+    }
+
+    /**
+     * action tests all proxies on two urls, one of them - amazon produc page url, the other one is a regular control url
+     * @return ViewModel
+     */
+    public function testProxyAction(): ViewModel
+    {
+        $asin = $this->params()->fromQuery('asin');
+        $globalConfig = $this->config->getConfig();
+        $product = new Product($this->config, $this->proxy, $this->userAgent);
+        $browser = $product->getBrowser();
+        pr(time());
+//        1581480763
+//        1581480686
+        $testUrl = 'https://amazon-parser.web-experiment.info/blow.php';
+//        $amazonUrl = 'https://www.amazon.ca/dp/B000WKQWMI/?m=A2VGYKZ8Q769UG&marketplaceID=A2EUQ1WTGCTBG2';
+//        $amazonUrl = 'https://www.amazon.ca/SanDisk-Extreme-SDSDXVE-064G-GNCIN-Newest-Version/dp/B01LORO7BA/ref=sr_1_1?m=A2VGYKZ8Q769UG&marketplaceID=A2EUQ1WTGCTBG2&qid=' . (time() - rand(20, 50)) . '&s=merchant-items&sr=1-1';
+//        $amazonUrl = 'https://www.amazon.ca/gp/product/B0083RTXOQ/ref=ox_sc_act_title_1?smid=A2VGYKZ8Q769UG&th=1&qid='.(time() - rand(20,50));
+//        $amazonUrl = $asin ? 'https://www.amazon.ca/dp/' . $asin . '/' : 'https://www.amazon.ca/dp/B07HKYZMQX/';
+//        $amazonUrl = 'https://www.amazon.ca/s?me=A2VGYKZ8Q769UG&marketplaceID=A2EUQ1WTGCTBG2';
+//        $amazonUrl = 'https://www.amazon.it/Gravity-coperta-ponderata-originale/dp/B07BNBFY52?pf_rd_p=e748cdd9-43f0-43b4-a6f6-4a1f49dab112&pd_rd_wg=j3Ndv&pf_rd_r=S7X2147EJTYYT6S6SMX7&ref_=pd_gw_unk&pd_rd_w=ActEa&pd_rd_r=a60e05aa-449d-49b9-8936-88c4616202ff';
+//        $amazonUrl = 'https://www.amazon.it/Gravity-coperta-ponderata-originale/dp/B07BNBFY52';
+        $amazonUrl = 'https://www.amazon.it/dp/B07BNBFY52';
+        $data = $browser->testProxy($testUrl, $amazonUrl);
+        pr($data);
+        return $this->returnZeroTemplate();
+    }
+
+    public function testImageExtractAction(): ViewModel
+    {
+        $asin = $this->params()->fromQuery('asin', 'B00BIP2QG2');
+        $locale = $this->params()->fromQuery('locale', 'com');
+        $config = $this->config->getConfig('settings');
+        $logger = new Logger($this->proxy->getDb(), $config);
+        $pd = new ProductDetails($logger, $asin);
+        $filePath = 'data/cache/product-page' . $asin . '-' . $locale . '.html';
+        $html = file_get_contents($filePath);
+        $images = $pd->extractImages($html, []);
+        $logger->add($asin, 'good message');
+        pr($images);
+        return $this->returnZeroTemplate();
+    }
+
+    public function testLimiterAction()
+    {
+        $limiter = new ProcessLimiter($this->config, [
+            'path' => '332',
+            'expireTime' => 240,
+            'processLimit' => 100,
+        ]);
+        $limiter->touchProcess(1567198, 'asinTag');
+    }
+
+    /**
+     * add useragent from list
+     * @return ViewModel
+     */
+    public function imuaAction()
+    {
+        UserAgent::updateStatistics($this->db);
+        $content = file('data/content/ua.txt');
+//        pr($content);
+        $this->userAgent->getUserAgent();
+//        pr($this->userAgent);
+//        die();
+        $this->userAgent->insertAgents($content);
+        return $this->returnZeroTemplate();
+
+    }
+
+    public function testAction()
+    {
+        $asin = $this->params()->fromQuery('asin', 'B07LC4HP33');
+        $locale = $this->params()->fromQuery('locale', 'ca');
+        $config = $this->config->getConfig('settings');
+        $localeConfig = $this->config->getLocaleConfig($locale);
+
+        $product = new Product($this->config, $this->proxy, $this->userAgent, $asin, $locale);
+        $content = $product->getFile('product');
+        $stockHtml = 'some html';
+        $logger = new Logger($this->proxy->getDb(), $config);
+        $pm = new ProductMarker($content, $localeConfig);
+        [$marker, $asinCheck] = $pm->check($asin);
+
+        if (!$marker) {
+            $stock = 0;
+            $stockHtml = 'missing product marker';
+        } elseif (!$asinCheck) {
+            $stock = 0;
+            $stockHtml = 'wrong variation content received';
+        } else {
+            $stockHtml = 'found!';
+        }
+        pr($stockHtml);
+        pr($marker);
+
+        return $this->returnZeroTemplate();
+    }
+
+    /**
+     * @return ViewModel
+     * @throws \Exception
+     */
+    public function testCamelAction()
+    {
+        $asin = 'B0727X642G';
+        $locale = 'ca';
+
+        $camel = new Extractor($locale, $asin, $this->config);
+        $data = $camel->loadDataAsArray();
+        $content = gzuncompress($data['data']['content']);
+        //pr($content);
+        $prices = $camel->extractPrices($content);
+        pr($prices);
+//        pr($content);
+        /*
+                for($i = 1; $i <100; $i++) {
+                    pr('a '. $i);
+                    $camel->selfUpdatePrices();
+                    pr('a '. $i);
+                }
+        */
+        return $this->returnZeroTemplate();
+    }
+
+    public function proxyAction()
+    {
+        $enableExisting = $this->params()->fromQuery('enableExisting');
+
+        $ps = new ProxyScraper($this->config);
+        $result = $ps->processProxyUpdate($enableExisting);
+        pr($result);
+        pr($ps->getStringErrorMessages());
+        pr($ps->getStringMessages());
+
+        pr("-----------\n\n\n");
+
+        $ps = new File($this->config);
+        $result = $ps->processProxyUpdate($enableExisting);
+        pr($result);
+        pr($ps->getStringErrorMessages());
+        pr($ps->getStringMessages());
+        return $this->returnZeroTemplate();
+    }
+
+
+}

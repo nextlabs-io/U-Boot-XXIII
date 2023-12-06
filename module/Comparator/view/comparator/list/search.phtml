@@ -1,0 +1,148 @@
+<?php
+/* @var $form  Comparator\Model\Form\SearchForm */
+?>
+
+<?php $form->prepare(); ?>
+<?php echo $this->form()->openTag($form); ?>
+
+<div class="">
+    <div class="page-title">
+        <div class="title_center">
+            <h1>Add items</h1>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <?php
+            $syncStatuses = \Parser\Model\Configuration\ProductSyncable::getOptions();
+            $syncStatus = $syncStatuses[\Parser\Model\Configuration\ProductSyncable::SYNCABLE_PRESYNCED];
+            ?>
+            <div class="x_panel">
+                <div class="x_content">
+
+                    <?php if($this->message) : ?>
+                        <div class="alert alert-info alert-dismissible" role="alert"><strong>
+                                <?= $this->message ?>
+                            </strong></div>
+                    <?php endif; ?>
+                    <?php if($this->errors) : ?>
+                        <div class="alert alert-danger alert-dismissible" role="alert"><strong>
+                                <?= $this->errors ?>
+                            </strong></div>
+                    <?php endif; ?>
+
+                    <?php $select = $form->get('locale'); ?>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12"><?php echo $this->formLabel($select); ?>
+                            <span class="required">*</span>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div id="locale-select" class="btn-group" data-toggle="buttons">
+                                <?php unset($locales[key($locales)]);
+                                foreach ($locales as $localeItems) :
+                                    ?>
+                                    <label class="btn btn-default<?php if ($locale == $localeItems) echo ' active'; ?>"
+                                           data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
+                                        <input type="radio" name="locale"
+                                               value="<?= $localeItems ?>"<?php if ($locale == $localeItems) echo ' checked="checked"'; ?>>
+                                        &nbsp; <?= $localeItems ?> &nbsp;
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <?php
+                    foreach ($form->getElements() as $customElement) {
+                        if ($customElement->getAttribute('data') === 'custom') {
+                            ?>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12"><?php echo $this->formLabel($customElement); ?>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <?php echo $this->formText($customElement); ?>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                    }
+                    ?>
+                    <div class="clearfix"></div>
+                    <div class="ln_solid"></div>
+
+                    <?php $fileElement = $form->get('product_list'); ?>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" data-toggle="tooltip"
+                               data-placement="right" title=""
+                               data-original-title="File format per line: Marketplace Category;Marketplace Category Name;Web Hierarchy Location Codes;Category Url
+"><?php echo $this->formLabel($fileElement); ?> <br> Download <a href="<?= $this->url('crawler', ['action' => 'sampleComparatorItemList']) ?>">sample file</a>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <?php echo $this->formFile($fileElement); ?>
+                            <?php if ($this->formElementErrors($fileElement)) : ?>
+                                <ul class="parsley-errors-list filled" id="parsley-id-1">
+                                    <li class=""><?= $this->formElementErrors($fileElement) ?></li>
+                                </ul>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <?php $eanListTextarea = $form->get('product_ean'); ?>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12"><?php echo $this->formLabel($eanListTextarea); ?>
+                             </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12"> <?php echo $this->formTextarea($eanListTextarea); ?>
+                            <?php if($this->formElementErrors($eanListTextarea)) : ?>
+                                <ul class="parsley-errors-list filled" id="parsley-id-2">
+                                    <li class="parsley-required">
+                                        <?= $this->formElementErrors($eanListTextarea) ?>
+                                    </li>
+                                </ul>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <?php $upcListTextarea = $form->get('product_upc'); ?>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12"><?php echo $this->formLabel($upcListTextarea); ?>
+                             </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12"> <?php echo $this->formTextarea($upcListTextarea); ?>
+                            <?php if($this->formElementErrors($upcListTextarea)) : ?>
+                                <ul class="parsley-errors-list filled" id="parsley-id-2">
+                                    <li class="parsley-required">
+                                        <?= $this->formElementErrors($upcListTextarea) ?>
+                                    </li>
+                                </ul>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                            <button type="submit" class="btn btn-default">Submit</button>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- x_content -->
+            </div>
+            <!--div class="row scroll">
+                <div class="col-md-12 col-sm-12 col-xs-12 inner-scroll">
+                    <?php
+//                    echo $this->table;
+                    ?>
+                </div>
+            </div-->
+            <!-- x_panel-->
+        </div>
+    </div>
+</div>
+
+<!-- x_panel -->
+</div>
+<!-- col-md-4-->
+<?php echo $this->form()->closeTag(); ?>
+						
+						
+						 
+                  

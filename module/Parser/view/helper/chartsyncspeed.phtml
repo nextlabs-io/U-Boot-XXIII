@@ -1,0 +1,72 @@
+<div class="x_panel">
+    <div class="x_title">
+        <h2>Sync delay spread
+        </h2>
+        <ul class="nav navbar-right panel_toolbox" style="float:right;">
+            <li data-toggle="tooltip" data-placement="left" data-original-title="Click for explanation">
+                <a data-toggle="modal" data-target=".sync-spread-helptip"><i class="fa fa-question-circle"></i></a>
+            </li>
+        </ul>
+        <div class="clearfix"></div>
+    </div>
+    <div class="x_content">
+        <canvas id="<?= $this->chartId ?>" style="width:100%; height:400px;"></canvas>
+    </div>
+</div>
+<?php
+$sync = [];
+$labels = [];
+foreach ($this->data as $key => $value) {
+    $sync[] = $value;
+    $labels[] = $key;
+}
+?>
+<script>
+    $(function () {
+        if ($('#<?= $this->chartId ?>').length) {
+            var ctx = document.getElementById("<?= $this->chartId ?>");
+            ctx.height = 171;
+            var lineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [<?= implode(",", $labels) ?>],
+                    datasets: [{
+                        label: "Sync delay spread",
+                        backgroundColor: "rgba(195, 209, 213, 0.31)",
+                        borderColor: "rgba(195, 209, 213, 0.7)",
+                        pointBorderColor: "rgba(195, 209, 213, 0.7)",
+                        pointBackgroundColor: "rgba(195, 209, 213, 0.7)",
+                        pointHoverBackgroundColor: "#fff",
+                        pointHoverBorderColor: "rgba(220,220,220,1)",
+                        pointBorderWidth: 0,
+                        data: [<?= implode(",", $sync) ?>]
+                    }]
+                }
+            });
+        }
+    });
+</script>
+<div class="modal fade bs-example-modal-lg sync-spread-helptip" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Sync delay spread graph</h4>
+            </div>
+            <div class="modal-body">
+                <p><strong>Horizontal line: sync-delay.</strong></p>
+                <p><strong>Vertical line: number of products.</strong></p>
+                <p>There is a base sync interval which is usually equal to 3 hours and depends on the configuration settings. A Sync-Delay attribute for the product indicates how many of those 3 hour intervals should pass between synchronization. If a product is synced and no price/stock is changed, the sync-delay attribute is increased.
+                    </p>
+                <p>If the product is unlikely to change stock and price, it gets a higher Sync-Delay and is only updated once a day or more.</p>
+                <p>This graph indicates how many products have a certain sync delay.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>

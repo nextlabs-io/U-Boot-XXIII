@@ -1,0 +1,138 @@
+<?php
+/* @var $form  Parser\Model\Form\LoginForm */
+
+?>
+
+<div class="">
+    
+	<div class="page-title">
+        <div class="title_center">
+            <h1>Edit profile</h1>
+        </div>
+
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+
+            <div class="x_panel">
+                <div class="x_content">
+                    <?php if ($this->message) : ?>
+                        <div class="alert alert-info alert-dismissible" role="alert"><strong>
+                                <?= $this->message ?>
+                            </strong></div>
+                    <?php endif; ?>
+                    <?php if ($this->errors) : ?>
+                        <div class="alert alert-danger alert-dismissible" role="alert"><strong>
+                                <?= $this->errors ?>
+                            </strong></div>
+                    <?php endif; ?>
+
+                    <?php $form->prepare(); ?>
+
+                    <form id="edit-form" data-parsley-validate="" class="form-horizontal form-label-left"
+                          novalidate="" method="POST">
+
+                        <div class="form-group">
+                            <?php $login = $form->get('login'); ?>
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Login <span
+                                        class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <?php echo $this->formText($login); ?>
+                            </div>
+                            <?php echo $this->formElementErrors($login); ?>
+                        </div>
+                        <div class="form-group">
+                            <?php $email = $form->get('email'); ?>
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Email </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <?php echo $this->formText($email); ?>
+                            </div>
+                            <?php echo $this->formElementErrors($email); ?>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <div class="checkbox">
+                                    <label class="padding-none">
+                                        <div class="w20" style="position: relative;">
+                                            <input class="flat"
+                                                   style="position: absolute; opacity: 0;"
+                                                   type="checkbox" name="change-password"<?php echo $change ? " checked='checked'" : "";?>>
+                                            <ins class="iCheck-helper"
+                                                 style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;"></ins>
+                                        </div>
+                                        Change password?
+                                    </label>
+                                    <div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <?php $pass = $form->get('password'); ?>
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Password </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <?php echo $this->formPassword($pass); ?>
+                            </div>
+                            <?php echo $this->formElementErrors($pass); ?>
+                        </div>
+                        <div class="form-group">
+                            <?php $pass = $form->get('password2'); ?>
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name"> Repeat Password </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <?php echo $this->formPassword($pass); ?>
+                            </div>
+                            <?php echo $this->formElementErrors($pass); ?>
+                        </div>
+                        <div class="ln_solid"></div>
+
+                        <?php
+                        foreach ($form->getElements() as $customElement) {
+                            if ($customElement->getAttribute('data') === 'custom') {
+                                ?>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12"><?php echo $this->formLabel($customElement); ?>
+                                    </label>
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <?php echo $this->formText($customElement); ?>
+                                    </div>
+                                </div>
+                                <?php
+                            } elseif($customElement->getAttribute('data') === 'manually-placed') {
+                                ?>
+                                <div class="form-group">
+                                    <?php $parseOffers = $form->get('parseOffers');?>
+
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12"><?php echo $this->formLabel($customElement); ?>
+                                    </label>
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <input type="checkbox"
+                                               name="<?= $customElement->getAttribute('name')?>"
+                                               id="<?= $customElement->getAttribute('name')?>"
+                                               value="1"
+                                            <?= !$customElement->getValue() ?: 'checked="checked"'?>
+                                               class="js-switch"/>
+                                        <br/>
+                                        <?= $customElement->getAttribute('data-comment')?>
+                                    </div>
+                                </div>
+                            <?php }
+                        }
+                        ?>
+
+
+<div class="ln_solid"><br></div>
+                        <div class="form-group">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                <button type="submit" class="btn btn-default">Submit</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

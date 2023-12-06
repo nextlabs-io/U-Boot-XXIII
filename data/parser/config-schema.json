@@ -1,0 +1,1247 @@
+{
+  "settings": {
+    "title": "settings",
+    "type": "object",
+    "properties": {
+      "parseOffers": {
+        "title": "parseOffers",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "storeOffersData": {
+        "title": "storeOffersData",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "processOnlyOffers": {
+        "title": "processOnlyOffers",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "activeConnections": {
+        "title": "activeConnections",
+        "type": "string"
+      },
+      "productSyncLimit": {
+        "title": "productSyncLimit",
+        "type": "string"
+      },
+      "processExpireDelay": {
+        "title": "processExpireDelay",
+        "type": "string"
+      },
+      "magentoProductSyncLimit": {
+        "title": "magentoProductSyncLimit",
+        "type": "string"
+      },
+      "magentoProcessExpireDelay": {
+        "title": "magentoProcessExpireDelay",
+        "type": "string"
+      },
+      "productPerPage": {
+        "title": "productPerPage",
+        "type": "string"
+      },
+      "productSyncDelay": {
+        "title": "productSyncDelay",
+        "type": "string"
+      },
+      "syncSpeedDelayLimit": {
+        "title": "syncSpeedDelayLimit",
+        "type": "string"
+      },
+      "syncSpeedDelayToDeleteTrigger": {
+        "title": "syncSpeedDelayToDeleteTrigger",
+        "type": "string"
+      },
+      "magentoControlUrl": {
+        "title": "magentoControlUrl",
+        "type": "string"
+      },
+      "magentoControlPass": {
+        "title": "magentoControlPass",
+        "type": "string"
+      },
+      "magentoCreateProductOnMissing": {
+        "title": "magentoCreateProductOnMissing",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "magentoDeleteProductOnNotSyncable": {
+        "title": "magentoDeleteProductOnNotSyncable",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "magentoDeleteProductOnZeroPrice": {
+        "title": "magentoDeleteProductOnZeroPrice",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "logger": {
+        "title": "logger",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "proxyZeroResponsePercentBan": {
+        "title": "proxyZeroResponsePercentBan",
+        "type": "string"
+      },
+      "proxy200ResponsePercentBan": {
+        "title": "proxy200ResponsePercentBan",
+        "type": "string"
+      },
+      "proxyBanDelay": {
+        "title": "proxyBanDelay",
+        "type": "string"
+      },
+      "productKeepStockOnProxyFail": {
+        "title": "productKeepStockOnProxyFail",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "addVariationAttributeToTitle": {
+        "title": "addVariationAttributeToTitle",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "blacklistByAddon": {
+        "title": "blacklistByAddon",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "blacklistByDimmension": {
+        "title": "blacklistByDimmension",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "blacklistByDelivery": {
+        "title": "blacklistByDelivery",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "csvFile": {
+        "title": "csvFile",
+        "type": "string"
+      },
+      "forceDescriptionReload": {
+        "title": "forceDescriptionReload",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "maxRetries": {
+        "title": "maxRetries",
+        "type": "string"
+      },
+      "maxProxyRetries": {
+        "title": "maxProxyRetries",
+        "type": "string"
+      },
+      "testContentPath": {
+        "title": "testContentPath",
+        "type": "string"
+      },
+      "curlTimeout": {
+        "title": "curlTimeout",
+        "type": "string"
+      },
+      "disableDeadProxies": {
+        "title": "disableDeadProxies",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "processNotExpiredProductsOnEmptyQueue": {
+        "title": "processNotExpiredProductsOnEmptyQueue",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "keepaApiKeyIdentity": {
+        "title": "keepaApiKeyIdentity",
+        "type": "string"
+      }
+    }
+  },
+  "centric": {
+    "title": "centric",
+    "type": "object",
+    "properties": {
+      "enabled": {
+        "title": "enabled",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "centricApiKey": {
+        "title": "centricApiKey",
+        "type": "string"
+      },
+      "centricProcessLimit": {
+        "title": "centricProcessLimit",
+        "type": "string"
+      },
+      "centricCampaigns": {
+        "title": "centricCampaigns",
+        "type": "object",
+        "properties": {
+          "ca": {
+            "title": "ca",
+            "type": "string"
+          },
+          "com": {
+            "title": "com",
+            "type": "string"
+          },
+          "de": {
+            "title": "de",
+            "type": "string"
+          }
+        }
+      },
+      "requestDataAdditionalOptions": {
+        "title": "requestDataAdditionalOptions",
+        "type": "object",
+        "properties": {
+          "product_status": {
+            "title": "product_status",
+            "type": "string"
+          },
+          "retrieve_other_identifiers": {
+            "title": "retrieve_other_identifiers",
+            "type": "number"
+          }
+        }
+      },
+      "requestFields": {
+        "title": "requestFields",
+        "type": "string"
+      }
+    }
+  },
+  "captcha": {
+    "title": "captcha",
+    "type": "object",
+    "properties": {
+      "deathbycaptcha": {
+        "title": "deathbycaptcha",
+        "type": "object",
+        "properties": {
+          "login": {
+            "title": "login",
+            "type": "string"
+          },
+          "password": {
+            "title": "password",
+            "type": "string"
+          }
+        }
+      },
+      "captchasolutions": {
+        "title": "captchasolutions",
+        "type": "object",
+        "properties": {
+          "login": {
+            "title": "login",
+            "type": "string"
+          },
+          "password": {
+            "title": "password",
+            "type": "string"
+          }
+        }
+      },
+      "solve_captcha": {
+        "title": "solve_captcha",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "captcha_service": {
+        "title": "captcha_service",
+        "type": "string"
+      },
+      "data_dir": {
+        "title": "data_dir",
+        "type": "string"
+      }
+    }
+  },
+  "locales": {
+    "title": "locales",
+    "type": "object",
+    "properties": {
+      "com": {
+        "title": "com",
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "id",
+            "type": "string"
+          },
+          "url": {
+            "title": "url",
+            "type": "string"
+          }
+        }
+      },
+      "fr": {
+        "title": "fr",
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "id",
+            "type": "string"
+          },
+          "url": {
+            "title": "url",
+            "type": "string"
+          }
+        }
+      },
+      "uk": {
+        "title": "uk",
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "id",
+            "type": "string"
+          },
+          "url": {
+            "title": "url",
+            "type": "string"
+          }
+        }
+      },
+      "ca": {
+        "title": "ca",
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "id",
+            "type": "string"
+          },
+          "url": {
+            "title": "url",
+            "type": "string"
+          }
+        }
+      },
+      "de": {
+        "title": "de",
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "id",
+            "type": "string"
+          },
+          "url": {
+            "title": "url",
+            "type": "string"
+          }
+        }
+      },
+      "es": {
+        "title": "es",
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "id",
+            "type": "string"
+          },
+          "url": {
+            "title": "url",
+            "type": "string"
+          }
+        }
+      },
+      "it": {
+        "title": "it",
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "id",
+            "type": "string"
+          },
+          "url": {
+            "title": "url",
+            "type": "string"
+          }
+        }
+      },
+      "js": {
+        "title": "js",
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "id",
+            "type": "string"
+          },
+          "url": {
+            "title": "url",
+            "type": "string"
+          }
+        }
+      },
+      "in": {
+        "title": "in",
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "id",
+            "type": "string"
+          },
+          "url": {
+            "title": "url",
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "pingRequest": {
+    "title": "pingRequest",
+    "type": "object",
+    "properties": {
+      "attributesToUpdate": {
+        "title": "attributesToUpdate",
+        "type": "object",
+        "properties": {
+          "description": {
+            "title": "description",
+            "type": "string"
+          },
+          "short_description": {
+            "title": "short_description",
+            "type": "string"
+          },
+          "made_by": {
+            "title": "made_by",
+            "type": "string"
+          },
+          "category": {
+            "title": "category",
+            "type": "string"
+          },
+          "images": {
+            "title": "images",
+            "type": "string"
+          }
+        }
+      },
+      "checkM2EProErrors": {
+        "title": "checkM2EProErrors",
+        "type": "boolean",
+        "format": "checkbox"
+      }
+    }
+  },
+  "createRequest": {
+    "title": "createRequest",
+    "type": "object",
+    "properties": {
+      "attributesToAdd": {
+        "title": "attributesToAdd",
+        "type": "object",
+        "properties": {
+          "package_dimensions": {
+            "title": "package_dimensions",
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "proxySources": {
+    "title": "proxySources",
+    "type": "object",
+    "properties": {
+      "default": {
+        "title": "default",
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "title": "enabled",
+            "type": "boolean",
+            "format": "checkbox"
+          },
+          "type": {
+            "title": "type",
+            "type": "string"
+          },
+          "maxUsageLimit": {
+            "title": "maxUsageLimit",
+            "type": "string"
+          },
+          "disableStrategy": {
+            "title": "disableStrategy",
+            "type": "string"
+          }
+        }
+      },
+      "scraperPrem": {
+        "title": "scraperPrem",
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "title": "enabled",
+            "type": "boolean",
+            "format": "checkbox"
+          },
+          "type": {
+            "title": "type",
+            "type": "string"
+          },
+          "baseUrl": {
+            "title": "baseUrl",
+            "type": "string"
+          },
+          "maxUsageLimit": {
+            "title": "maxUsageLimit",
+            "type": "string"
+          },
+          "proxyType": {
+            "title": "proxyType",
+            "type": "string"
+          },
+          "proxyCharacter": {
+            "title": "proxyCharacter",
+            "type": "string"
+          },
+          "serial": {
+            "title": "serial",
+            "type": "string"
+          },
+          "expirationQuery": {
+            "title": "expirationQuery",
+            "type": "string"
+          },
+          "remainingQuery": {
+            "title": "remainingQuery",
+            "type": "string"
+          },
+          "ipQuery": {
+            "title": "ipQuery",
+            "type": "string"
+          },
+          "pageSize": {
+            "title": "pageSize",
+            "type": "string"
+          },
+          "disableStrategy": {
+            "title": "disableStrategy",
+            "type": "string"
+          },
+          "disableLevel": {
+            "title": "disableLevel",
+            "type": "string"
+          },
+          "deactivateLevel": {
+            "title": "deactivateLevel",
+            "type": "string"
+          },
+          "maxAllowedActiveIps": {
+            "title": "maxAllowedActiveIps",
+            "type": "string"
+          }
+        }
+      },
+      "scraperFree": {
+        "title": "scraperFree",
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "title": "enabled",
+            "type": "boolean",
+            "format": "checkbox"
+          },
+          "type": {
+            "title": "type",
+            "type": "string"
+          },
+          "baseUrl": {
+            "title": "baseUrl",
+            "type": "string"
+          },
+          "maxUsageLimit": {
+            "title": "maxUsageLimit",
+            "type": "string"
+          },
+          "serial": {
+            "title": "serial",
+            "type": "string"
+          },
+          "ipQuery": {
+            "title": "ipQuery",
+            "type": "string"
+          },
+          "pageSize": {
+            "title": "pageSize",
+            "type": "string"
+          },
+          "disableStrategy": {
+            "title": "disableStrategy",
+            "type": "string"
+          },
+          "disableLevel": {
+            "title": "disableLevel",
+            "type": "string"
+          },
+          "deactivateLevel": {
+            "title": "deactivateLevel",
+            "type": "string"
+          },
+          "maxAllowedActiveIps": {
+            "title": "maxAllowedActiveIps",
+            "type": "string"
+          },
+          "remainingQuery": {
+            "title": "remainingQuery",
+            "type": "string"
+          },
+          "enableByCron": {
+            "title": "enableByCron",
+            "type": "boolean",
+            "format": "checkbox"
+          }
+        }
+      },
+      "gsa": {
+        "title": "gsa",
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "title": "enabled",
+            "type": "boolean",
+            "format": "checkbox"
+          },
+          "csvSeparator": {
+            "title": "csvSeparator",
+            "type": "string"
+          },
+          "maxUsageLimit": {
+            "title": "maxUsageLimit",
+            "type": "string"
+          },
+          "type": {
+            "title": "type",
+            "type": "string"
+          },
+          "path": {
+            "title": "path",
+            "type": "string"
+          },
+          "pageSize": {
+            "title": "pageSize",
+            "type": "string"
+          },
+          "disableStrategy": {
+            "title": "disableStrategy",
+            "type": "string"
+          },
+          "disableLevel": {
+            "title": "disableLevel",
+            "type": "string"
+          },
+          "deactivateLevel": {
+            "title": "deactivateLevel",
+            "type": "string"
+          },
+          "maxAllowedActiveIps": {
+            "title": "maxAllowedActiveIps",
+            "type": "string"
+          }
+        }
+      },
+      "badSample": {
+        "title": "badSample",
+        "type": "object",
+        "properties": {
+          "type": {
+            "title": "type",
+            "type": "string"
+          },
+          "enabled": {
+            "title": "enabled",
+            "type": "boolean",
+            "format": "checkbox"
+          }
+        }
+      },
+      "scraperFreeCA": {
+        "title": "scraperFreeCA",
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "title": "enabled",
+            "type": "boolean",
+            "format": "checkbox"
+          },
+          "type": {
+            "title": "type",
+            "type": "string"
+          },
+          "baseUrl": {
+            "title": "baseUrl",
+            "type": "string"
+          },
+          "maxUsageLimit": {
+            "title": "maxUsageLimit",
+            "type": "string"
+          },
+          "remainingQuery": {
+            "title": "remainingQuery",
+            "type": "string"
+          },
+          "ipQuery": {
+            "title": "ipQuery",
+            "type": "string"
+          },
+          "pageSize": {
+            "title": "pageSize",
+            "type": "string"
+          },
+          "disableStrategy": {
+            "title": "disableStrategy",
+            "type": "string"
+          },
+          "disableLevel": {
+            "title": "disableLevel",
+            "type": "string"
+          },
+          "deactivateLevel": {
+            "title": "deactivateLevel",
+            "type": "string"
+          },
+          "maxAllowedActiveIps": {
+            "title": "maxAllowedActiveIps",
+            "type": "string"
+          }
+        }
+      },
+      "stormproxy": {
+        "title": "stormproxy",
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "title": "enabled",
+            "type": "boolean",
+            "format": "checkbox"
+          },
+          "csvSeparator": {
+            "title": "csvSeparator",
+            "type": "string"
+          },
+          "maxUsageLimit": {
+            "title": "maxUsageLimit",
+            "type": "string"
+          },
+          "type": {
+            "title": "type",
+            "type": "string"
+          },
+          "path": {
+            "title": "path",
+            "type": "string"
+          },
+          "pageSize": {
+            "title": "pageSize",
+            "type": "string"
+          },
+          "disableStrategy": {
+            "title": "disableStrategy",
+            "type": "string"
+          },
+          "disableLevel": {
+            "title": "disableLevel",
+            "type": "string"
+          },
+          "deactivateLevel": {
+            "title": "deactivateLevel",
+            "type": "string"
+          },
+          "maxAllowedActiveIps": {
+            "title": "maxAllowedActiveIps",
+            "type": "string"
+          }
+        }
+      },
+      "proxyrack": {
+        "title": "proxyrack",
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "title": "enabled",
+            "type": "boolean",
+            "format": "checkbox"
+          },
+          "csvSeparator": {
+            "title": "csvSeparator",
+            "type": "string"
+          },
+          "maxUsageLimit": {
+            "title": "maxUsageLimit",
+            "type": "string"
+          },
+          "type": {
+            "title": "type",
+            "type": "string"
+          },
+          "path": {
+            "title": "path",
+            "type": "string"
+          },
+          "pageSize": {
+            "title": "pageSize",
+            "type": "string"
+          },
+          "disableStrategy": {
+            "title": "disableStrategy",
+            "type": "string"
+          },
+          "disableLevel": {
+            "title": "disableLevel",
+            "type": "string"
+          },
+          "deactivateLevel": {
+            "title": "deactivateLevel",
+            "type": "string"
+          },
+          "maxAllowedActiveIps": {
+            "title": "maxAllowedActiveIps",
+            "type": "string"
+          }
+        }
+      },
+      "tor": {
+        "title": "tor",
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "title": "enabled",
+            "type": "boolean",
+            "format": "checkbox"
+          },
+          "csvSeparator": {
+            "title": "csvSeparator",
+            "type": "string"
+          },
+          "maxUsageLimit": {
+            "title": "maxUsageLimit",
+            "type": "string"
+          },
+          "type": {
+            "title": "type",
+            "type": "string"
+          },
+          "proxyType": {
+            "title": "proxyType",
+            "type": "string"
+          },
+          "proxyCharacter": {
+            "title": "proxyCharacter",
+            "type": "string"
+          },
+          "path": {
+            "title": "path",
+            "type": "string"
+          },
+          "pageSize": {
+            "title": "pageSize",
+            "type": "string"
+          },
+          "disableStrategy": {
+            "title": "disableStrategy",
+            "type": "string"
+          },
+          "disableLevel": {
+            "title": "disableLevel",
+            "type": "string"
+          },
+          "deactivateLevel": {
+            "title": "deactivateLevel",
+            "type": "string"
+          },
+          "maxAllowedActiveIps": {
+            "title": "maxAllowedActiveIps",
+            "type": "string"
+          }
+        }
+      },
+      "ltespace": {
+        "title": "ltespace",
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "title": "enabled",
+            "type": "boolean",
+            "format": "checkbox"
+          },
+          "csvSeparator": {
+            "title": "csvSeparator",
+            "type": "string"
+          },
+          "maxUsageLimit": {
+            "title": "maxUsageLimit",
+            "type": "string"
+          },
+          "type": {
+            "title": "type",
+            "type": "string"
+          },
+          "proxyType": {
+            "title": "proxyType",
+            "type": "string"
+          },
+          "proxyCharacter": {
+            "title": "proxyCharacter",
+            "type": "string"
+          },
+          "path": {
+            "title": "path",
+            "type": "string"
+          },
+          "pageSize": {
+            "title": "pageSize",
+            "type": "string"
+          },
+          "disableStrategy": {
+            "title": "disableStrategy",
+            "type": "string"
+          },
+          "disableLevel": {
+            "title": "disableLevel",
+            "type": "string"
+          },
+          "deactivateLevel": {
+            "title": "deactivateLevel",
+            "type": "string"
+          },
+          "maxAllowedActiveIps": {
+            "title": "maxAllowedActiveIps",
+            "type": "string"
+          }
+        }
+      },
+      "torAvito": {
+        "title": "torAvito",
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "title": "enabled",
+            "type": "boolean",
+            "format": "checkbox"
+          },
+          "csvSeparator": {
+            "title": "csvSeparator",
+            "type": "string"
+          },
+          "maxUsageLimit": {
+            "title": "maxUsageLimit",
+            "type": "string"
+          },
+          "type": {
+            "title": "type",
+            "type": "string"
+          },
+          "path": {
+            "title": "path",
+            "type": "string"
+          },
+          "pageSize": {
+            "title": "pageSize",
+            "type": "string"
+          },
+          "disableStrategy": {
+            "title": "disableStrategy",
+            "type": "string"
+          },
+          "disableLevel": {
+            "title": "disableLevel",
+            "type": "boolean",
+            "format": "checkbox"
+          },
+          "deactivateLevel": {
+            "title": "deactivateLevel",
+            "type": "string"
+          },
+          "maxAllowedActiveIps": {
+            "title": "maxAllowedActiveIps",
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "profileSettings": {
+    "title": "profileSettings",
+    "type": "object",
+    "properties": {
+      "keepaApiKey": {
+        "title": "keepaApiKey",
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "name",
+            "type": "string"
+          }
+        }
+      },
+      "bestBuyKeepaApiKey": {
+        "title": "bestBuyKeepaApiKey",
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "name",
+            "type": "string"
+          }
+        }
+      },
+      "comparatorKeepaApiKey": {
+        "title": "comparatorKeepaApiKey",
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "name",
+            "type": "string"
+          }
+        }
+      },
+      "parseOffers": {
+        "title": "parseOffers",
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "name",
+            "type": "string"
+          },
+          "type": {
+            "title": "type",
+            "type": "string"
+          },
+          "checked": {
+            "title": "checked",
+            "type": "string"
+          },
+          "default": {
+            "title": "default",
+            "type": "string"
+          },
+          "comment": {
+            "title": "comment",
+            "type": "string"
+          }
+        }
+      },
+      "locale_primeTag": {
+        "title": "locale_primeTag",
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "name",
+            "type": "string"
+          },
+          "type": {
+            "title": "type",
+            "type": "string"
+          },
+          "checked": {
+            "title": "checked",
+            "type": "string"
+          },
+          "default": {
+            "title": "default",
+            "type": "string"
+          },
+          "comment": {
+            "title": "comment",
+            "type": "string"
+          }
+        }
+      },
+      "proxyscraper_serial": {
+        "title": "proxyscraper_serial",
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "name",
+            "type": "string"
+          }
+        }
+      },
+      "addImportFee": {
+        "title": "addImportFee",
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "name",
+            "type": "string"
+          },
+          "type": {
+            "title": "type",
+            "type": "string"
+          },
+          "checked": {
+            "title": "checked",
+            "type": "string"
+          },
+          "default": {
+            "title": "default",
+            "type": "string"
+          },
+          "comment": {
+            "title": "comment",
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "customFields": {
+    "title": "customFields",
+    "type": "object",
+    "properties": {
+      "UploadForm": {
+        "title": "UploadForm",
+        "type": "object",
+        "properties": {
+          "marketplace_category": {
+            "title": "marketplace_category",
+            "type": "object",
+            "properties": {
+              "name": {
+                "title": "name",
+                "type": "string"
+              },
+              "tableName": {
+                "title": "tableName",
+                "type": "string"
+              }
+            }
+          },
+          "marketplace_category_name": {
+            "title": "marketplace_category_name",
+            "type": "object",
+            "properties": {
+              "name": {
+                "title": "name",
+                "type": "string"
+              },
+              "tableName": {
+                "title": "tableName",
+                "type": "string"
+              }
+            }
+          },
+          "web_hierarchy_location_codes": {
+            "title": "web_hierarchy_location_codes",
+            "type": "object",
+            "properties": {
+              "name": {
+                "title": "name",
+                "type": "string"
+              },
+              "tableName": {
+                "title": "tableName",
+                "type": "string"
+              }
+            }
+          },
+          "web_hierarchy_location_name": {
+            "title": "web_hierarchy_location_name",
+            "type": "object",
+            "properties": {
+              "name": {
+                "title": "name",
+                "type": "string"
+              },
+              "tableName": {
+                "title": "tableName",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "telegram": {
+    "title": "telegram",
+    "type": "object",
+    "properties": {
+      "telegramBotKey": {
+        "title": "telegramBotKey",
+        "type": "string"
+      },
+      "telegramBotName": {
+        "title": "telegramBotName",
+        "type": "string"
+      },
+      "telegramBotChatId": {
+        "title": "telegramBotChatId",
+        "type": "string"
+      }
+    }
+  },
+  "hiddenSections": {
+    "title": "sidebar hidden sections (check to hide)",
+    "type": "object",
+    "properties": {
+      "home": {
+        "title": "home",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "Products": {
+        "title": "Products",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "FindProducts": {
+        "title": "FindProducts",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "UploadASINs": {
+        "title": "UploadASINs",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "QuickTour": {
+        "title": "QuickTour",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "GeneralConfig": {
+        "title": "GeneralConfig",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "cdiscount": {
+        "title": "CDiscount",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "comparator": {
+        "title": "Comparator",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "category-scrape-links": {
+        "title": "Scrape categories",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "bestbuy": {
+        "title": "BestBuy",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "keepa": {
+        "title": "Keepa",
+        "type": "boolean",
+        "format": "checkbox"
+      },
+      "form2206": {
+        "title": "Form2206",
+        "type": "boolean",
+        "format": "checkbox"
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<config>
+    <proxy>
+        <maxRetries>5</maxRetries>
+        <maxProxyRetries>5</maxProxyRetries>
+    </proxy>
+    <processLimiter>
+        <productsQtyPerRun>5</productsQtyPerRun>
+        <activeConnectionsLimit>20</activeConnectionsLimit>
+        <processId>bb_category</processId>
+        <processExpireDelay>600</processExpireDelay>
+    </processLimiter>
+    <settings>
+        <activeConnectionsLimit>20</activeConnectionsLimit>
+        <activeConnectionsLimitKeepa>-1</activeConnectionsLimitKeepa>
+        <processExpireDelay>600</processExpireDelay>
+        <baseUrl>https://www.bestbuy.ca</baseUrl>
+        <jsonUrl><![CDATA[https://www.bestbuy.ca/api/v2/json/search?categoryid={category}&currentRegion=ON&include=redirects&lang=en-CA&page={page}&pageSize=24&path=&query=&exp=&sortBy=relevance&sortDir=desc]]></jsonUrl>
+        <title><![CDATA[.//h1[contains(@class, 'title_3A6Uh')]]]></title>
+        <totalResults><![CDATA[.//div[contains(@class,'searchResultHeader_2tcah')]//span[contains(@class,'materialOverride_STCNx')]]]></totalResults>
+        <itemListLink><![CDATA[.//div[contains(@itemtype, 'http://schema.org/ItemList')]//div[contains(@class, 'x-productListItem')]//a[contains(@itemprop, 'url')]/@href]]></itemListLink>
+        <itemListTitle><![CDATA[.//div[contains(@itemtype, 'http://schema.org/ItemList')]//div[contains(@class, 'x-productListItem')]//div[@itemprop = 'name']]]></itemListTitle>
+        <itemListPrice><![CDATA[.//div[@itemtype = 'http://schema.org/ItemList']//div[contains(@class, 'x-productListItem')]//meta[@itemprop = 'price']/@content]]></itemListPrice>
+    </settings>
+</config>
+

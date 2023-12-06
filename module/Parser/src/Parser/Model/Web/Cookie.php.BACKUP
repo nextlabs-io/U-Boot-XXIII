@@ -1,0 +1,47 @@
+<?php
+/**
+ * Copyright WebExperiment.info
+ * Created by ernazar.
+ * Date: 06.09.2017
+ * Time: 17:42
+ */
+
+namespace Parser\Model\Web;
+
+/*
+ * class to define curl cookies depending on the proxy, ip etc.
+ * Generates cookie on a hash combined of the ip, process and limits usage by count.
+ */
+
+use Laminas\Http\Cookies;
+use Laminas\Cache\Storage\Adapter\Filesystem;
+use Laminas\Cache\Storage\Plugin\ExceptionHandler;
+
+class Cookie extends Cookies
+{
+    private $cache;
+
+    public function __construct($config = [])
+    {
+        $cacheLifeTime = $config['cacheLifeTime'] ?? 200;
+        $cache = new Filesystem();
+        $cache->getOptions()->setTtl($cacheLifeTime);
+        $plugin = new ExceptionHandler();
+        $plugin->getOptions()->setThrowExceptions(false);
+        $cache->addPlugin($plugin);
+        $this->cache = $cache;
+    }
+
+    public function getCookieFromCache($key)
+    {
+        $cookie = $this->cache->getItem($key, $success);
+        $cookie = $success ? unserialize($cookie) : [];
+        return $cookie;
+    }
+
+    public function setCookieCache($cookie, $key)
+    {
+        $this->cache->setItem($key, serialize($cookie));
+        return $this;
+    }
+}

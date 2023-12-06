@@ -1,0 +1,108 @@
+<?php
+/** @var \Laminas\View\Renderer\PhpRenderer $this */
+
+?>
+<?php
+/* @var $form  Parser\Model\Form\LoginForm */
+?>
+
+<div class="">
+    <div class="page-title">
+        <div class="title_center">
+            <h1>Configuration</h1>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+			<div class="x_title">
+                    <h1>Blacklist</h1>
+                    <div class="clearfix"></div>
+                </div>
+                <form method="post">
+				<h2>Brands per locale</h2>
+                <div class="clearfix"></div>
+				<p>Please put another brand on a new line</p>
+                <div class="x_content">
+                    <div class="table-responsive">
+                        <table class="table table-striped jambo_table bulk_action">
+                            <tr>
+                                <?php if (is_array($this->brandList) && count($this->brandList)) :
+                                    foreach ($this->brandList as $locale => $brandList) : ?>
+                                        <td>
+                                            <ul class="form-list manage-items">
+                                                <li><strong>
+                                                        <?= $locale ?>
+                                                    </strong> blacklisted brands
+                                                </li>
+                                                <li>
+                      <textarea class="brand-list"
+                                name="brand[<?= $locale ?>]"><?php if (count($brandList)) echo implode("\n", $brandList); ?>
+</textarea>
+                                                </li>
+                                            </ul>
+                                        </td>
+                                        <td>&nbsp;</td>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <td>No locales are set in configuration files</td>
+                                <?php endif; ?>
+                            </tr>
+                        </table>
+                    </div>
+                    <!-- table-responsive -->
+                </div>
+                <!--x_content-->
+                <h2>Seller/ASINs per locale</h2>
+                <div class="clearfix"></div>
+                <p>Line format: ASIN seller. Please put another ASIN+seller/ASIN/seller on a new line.<br/>
+                    If there is only ASIN: this ASIN will be blacklisted; if there is only seller: all offers of this seller will be skipped; if there are ASIN + seller: only offers matching this ASIN and seller will be skipped.</p>
+                <div class="x_content">
+                    <div class="table-responsive">
+                        <table class="table table-striped jambo_table">
+                            <tr>
+                                <?php if (is_array($this->sellerList) && count($this->sellerList)) :
+                                    foreach ($this->sellerList as $locale => $list) : ?>
+                                        <td>
+                                            <ul class="form-list manage-items">
+                                                <li><strong>
+                                                        <?= $locale ?>
+                                                    </strong> blacklisted sellers/asins
+                                                </li>
+                                                <li>
+                      <textarea class="seller-list brand-list"
+                                name="seller[<?= $locale ?>]"><?php if (count($list)) echo implode("\n", $list); ?>
+</textarea>
+                                                </li>
+                                            </ul>
+                                        </td>
+                                        <td>&nbsp;</td>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <td>No locales are set in configuration files</td>
+                                <?php endif; ?>
+                            </tr>
+                        </table>
+                    </div>
+                    <!-- table-responsive -->
+                </div>
+                <!--x_content-->
+                <div class="ln_solid"></div>
+                <p>
+                    <button type="" class="btn btn-default">Update</button>
+                </p>
+                <script>
+                    $(document).ready(function () {
+                        $('.brand-list').css({"width": "300px", "height": "300", "padding-right": "10"});
+                        $('.seller-list').css({"width": "300px", "height": "300", "padding-right": "10"});
+                    });
+                </script>
+                </form>
+            </div>
+            <!-- x_panel -->
+        </div>
+        <!-- col-md-12 -->
+    </div>
+    <!--  row -->
+</div>

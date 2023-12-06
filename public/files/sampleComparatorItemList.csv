@@ -1,0 +1,3 @@
+UPC;EAN;ASIN;Brand;MPN;Title;Image;Price;Shipping_Cost;Locale;Dropship_Provider_Name;Dropship_Margin;Currency;Predictive_Sales;minimum_qty
+;4895194965862;;Klevv;KD48GU880-32A160U;Mémoire de Jeu RAM DDR4 Mise à Niveau 3200 MHz 16 go;;68.04;10;Amazon;;USD;;10
+upc or ean or asin mandatory;;;brand is not mandatory;mpn is not mandatory;title is not mandatory;image is not mandatory;price is not mandatory;shipping cost is not mandatory;Locale is not mandatory;bestProvider;;USD;;1

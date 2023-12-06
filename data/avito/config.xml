@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<config>
+    <proxy>
+        <maxRetries>3</maxRetries>
+        <maxProxyRetries>10</maxProxyRetries>
+    </proxy>
+    <settings>
+        <parseOffers>1</parseOffers>
+        <baseUrl>https://www.avito.ru/</baseUrl>
+        <offers>
+            <offer email="webandpeople@gmail.com" tag="sas">
+                <![CDATA[novosibirskaya_oblast/tovary_dlya_kompyutera/komplektuyuschie/zhestkie_diski?view=gallery&q=sas]]></offer>
+
+        </offers>
+        <telegramBotKey></telegramBotKey>
+        <telegramBotName></telegramBotName>
+    </settings>
+
+    <captcha>
+        <!--
+        deathbycaptcha login pass
+        -->
+        <login></login>
+        <password></password>
+        <solve_captcha>0</solve_captcha>
+        <data_dir>/data/parser/Captcha</data_dir>
+    </captcha>
+    <email>
+        <name></name>
+        <host></host>
+        <username></username>
+        <password></password>
+    </email>
+
+</config>
+

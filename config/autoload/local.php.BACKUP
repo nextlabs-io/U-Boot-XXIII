@@ -1,0 +1,11 @@
+<?php
+
+return [
+    'db' => [
+        'dsn' => 'mysql:dbname=parser;host=127.0.0.1;',
+        'username' => 'parser',
+        'password' => '3vbvh%Ys',
+    ],
+    'website_mode' => '',
+];
+

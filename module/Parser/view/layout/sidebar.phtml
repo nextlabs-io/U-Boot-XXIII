@@ -1,0 +1,58 @@
+<?php
+/**
+ * @var Laminas\View\Renderer\PhpRenderer $this
+ */
+$demo = $this->asset('demo');
+?>
+<div class="menu_section">
+    <ul class="nav side-menu">
+        <?php foreach ($this->menuItems as $section => $item) :
+            $module = $item['module'] ?? '';
+            $action = $item['action'] ?? '';
+            $class = $item['class'] ?? '';
+            $class = $class ? ' ' . $class : '';
+            $title = $item['title'] ?? '';
+            $options = $item['options'] ?? [];
+            $params = $item['params'] ?? [];
+            $children = $item['children'] ?? [];
+            if($action){
+                $options['action'] = $action;
+            }
+            $link = $this->url($module, $options, $params);
+            if ($children) {
+                $url = '';
+            } else {
+                $url = ' href="' . $link . '"';
+            }
+            ?>
+            <li id="side-menu-<?= $section ?>"><a<?= $url ?>><i class="fa<?= $class ?>"></i> <?= $title ?><span
+                            class="fa"></span></a>
+
+                <?php
+                if ($children) :  ?>
+
+                    <ul class="nav child_menu">
+                        <?php foreach ($children as $key => $child) :
+                            $cModule = $child['module'] ?? '';
+                            $cAction = $child['action'] ?? '';
+                            $cClass = $child['class'] ?? '';
+                            $cClass = $cClass ? ' ' . $cClass : '';
+                            $cTitle = $child['title'] ?? '';
+                            $cOptions = $child['options'] ?? [];
+                            $cParams = $child['params'] ?? [];
+                            if($cAction){
+                                $cOptions['action'] = $cAction;
+                            }
+                            $cUrl = $this->url($cModule, $cOptions, $cParams);
+                            ?>
+
+                            <li id="side-menu-child-<?= $key ?>"><a href="<?= $cUrl ?>"><?= $cTitle ?></a>
+                            </li>
+                        <?php endforeach;
+                        ?>
+                    </ul>
+                <?php endif ?>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+</div>

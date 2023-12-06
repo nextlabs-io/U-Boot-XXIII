@@ -1,0 +1,249 @@
+{
+  "settings": {
+    "parseOffers": true,
+    "storeOffersData": true,
+    "processOnlyOffers": false,
+    "activeConnections": "20",
+    "productSyncLimit": "59",
+    "processExpireDelay": "800",
+    "magentoProductSyncLimit": "200",
+    "magentoProcessExpireDelay": "240",
+    "productPerPage": 100,
+    "productSyncDelay": "30000",
+    "syncSpeedDelayLimit": "50",
+    "syncSpeedDelayToDeleteTrigger": 20,
+    "magentoControlUrl": "",
+    "magentoControlPass": "",
+    "magentoCreateProductOnMissing": false,
+    "magentoDeleteProductOnNotSyncable": false,
+    "magentoDeleteProductOnZeroPrice": true,
+    "logger": true,
+    "proxyZeroResponsePercentBan": "90",
+    "proxy200ResponsePercentBan": true,
+    "proxyBanDelay": "1200",
+    "productKeepStockOnProxyFail": true,
+    "addVariationAttributeToTitle": true,
+    "blacklistByAddon": true,
+    "blacklistByDimmension": false,
+    "blacklistByDelivery": false,
+    "csvFile": "public\/downloads\/product-data-{date}.csv",
+    "forceDescriptionReload": false,
+    "maxRetries": "10",
+    "maxProxyRetries": "3",
+    "testContentPath": "data\/parser\/test",
+    "curlTimeout": "30",
+    "disableDeadProxies": true,
+    "processNotExpiredProductsOnEmptyQueue": false,
+    "keepaApiKeyIdentity": "admin"
+  },
+  "centric": {
+    "enabled": false,
+    "centricApiKey": "",
+    "centricProcessLimit": 100,
+    "centricCampaigns": {
+      "ca": null,
+      "com": null
+    },
+    "requestDataAdditionalOptions": {
+      "product_status": "all",
+      "retrieve_other_identifiers": "1"
+    },
+    "requestFields": "asin, upc, ean, mpn, title, features, size, model, brand, manufacturer,package_dimensions_height, package_dimensions_length,package_dimensions_weight, package_dimensions_width,item_dimensions_height, item_dimensions_length, item_dimensions_weight, item_dimensions_width, ean_list, upc_list"
+  },
+  "captcha": {
+    "deathbycaptcha": {
+      "login": "",
+      "password": ""
+    },
+    "captchasolutions": {
+      "login": "",
+      "password": ""
+    },
+    "solve_captcha": false,
+    "captcha_service": "captchasolutions",
+    "data_dir": "/data/parser/Captcha"
+  },
+  "locales": {
+    "com": {
+      "id": "com",
+      "url": "amazon.com"
+    },
+    "fr": {
+      "id": "fr",
+      "url": "amazon.fr"
+    },
+    "uk": {
+      "id": "uk",
+      "url": "amazon.co.uk"
+    },
+    "ca": {
+      "id": "ca",
+      "url": "amazon.ca"
+    },
+    "de": {
+      "id": "de",
+      "url": "amazon.de"
+    },
+    "es": {
+      "id": "es",
+      "url": "amazon.es"
+    },
+    "it": {
+      "id": "it",
+      "url": "amazon.it"
+    },
+    "js": {
+      "id": "jp",
+      "url": "amazon.jp"
+    },
+    "in": {
+      "id": "in",
+      "url": "amazon.in"
+    }
+  },
+  "pingRequest": {
+    "attributesToUpdate": {
+      "description": "description",
+      "short_description": "short_description",
+      "made_by": "manufacturer",
+      "category": "category",
+      "images": "images"
+    },
+    "checkM2EProErrors": false
+  },
+  "createRequest": {
+    "attributesToAdd": {
+      "package_dimensions": "centric"
+    }
+  },
+  "proxySources": {
+    "default": {
+      "enabled": true,
+      "type": "default",
+      "maxUsageLimit": "3",
+      "disableStrategy": "default"
+    },
+    "scraperPrem": {
+      "enabled": false,
+      "type": "proxyscraper",
+      "baseUrl": "https:\/\/api.proxyscrape.com",
+      "maxUsageLimit": "3",
+      "proxyType": "http",
+      "proxyCharacter": "single",
+      "serial": "SerialKey",
+      "expirationQuery": "request=lastupdated,proxytype=http",
+      "remainingQuery": "request=remaining",
+      "ipQuery": "request=getproxies,proxytype=http,timeout=2000,country=US,status=alive,ssl=yes",
+      "pageSize": 30,
+      "disableStrategy": "200response",
+      "disableLevel": "10",
+      "deactivateLevel": "15",
+      "maxAllowedActiveIps": "60"
+    },
+    "scraperFree": {
+      "enabled": true,
+      "type": "proxyscraper",
+      "baseUrl": "https://api.proxyscrape.com",
+      "maxUsageLimit": "3",
+      "serial": "",
+      "ipQuery": "request=getproxies,proxytype=http,timeout=2000,country=US,status=alive,ssl=yes",
+      "pageSize": "10",
+      "disableStrategy": "200response",
+      "disableLevel": "10",
+      "deactivateLevel": "15",
+      "maxAllowedActiveIps": "300",
+      "remainingQuery": "request=remaining",
+      "enableByCron": false
+    },
+    "gsa": {
+      "enabled": false,
+      "csvSeparator": ":",
+      "maxUsageLimit": "3",
+      "type": "file",
+      "path": "\/var\/www\/proxies.txt",
+      "pageSize": "10",
+      "disableStrategy": "200response",
+      "disableLevel": "10",
+      "deactivateLevel": "15",
+      "maxAllowedActiveIps": "10"
+    },
+    "badSample": {
+      "type": "unknown",
+      "enabled": false
+    }
+  },
+  "profileSettings": {
+    "keepaApiKey": {
+      "name": "Product keepa api key"
+    },
+    "bestBuyKeepaApiKey": {
+      "name": "Best Buy section keepa api key"
+    },
+    "comparatorKeepaApiKey": {
+      "name": "Product comparator api key"
+    },
+    "parseOffers": {
+      "name": "Parse amazon offers",
+      "type": "checkbox",
+      "checked": 1,
+      "default": 0,
+      "comment": "If not checked, only amazon sellers product page is parsed"
+    },
+    "locale_primeTag": {
+      "name": "Locale take Prime offers",
+      "type": "checkbox",
+      "checked": 1,
+      "default": 0,
+      "comment": "If checked, only prime offers will be taken, Note, the tag should be specified in the config files."
+    },
+    "proxyscraper_serial": {
+      "name": "ProxyScraper profile serial"
+    },
+    "addImportFee": {
+      "name": "Add import fee to the price",
+      "type": "checkbox",
+      "checked": 1,
+      "default": 0,
+      "comment": "If checked, import fee will be added to a price found on the product page."
+    }
+  },
+  "customFields": {
+    "UploadForm": {
+      "marketplace_category": {
+        "name": "Marketplace Category",
+        "tableName": null
+      },
+      "marketplace_category_name": {
+        "name": "Marketplace Category Name",
+        "tableName": null
+      },
+      "web_hierarchy_location_codes": {
+        "name": "Web Hierarchy Location Codes",
+        "tableName": null
+      },
+      "web_hierarchy_location_name": {
+        "name": "Web Hierarchy Location Name",
+        "tableName": null
+      }
+    }
+  },
+  "telegram": {
+    "telegramBotKey": null,
+    "telegramBotName": null,
+    "telegramBotChatId": null
+  },
+  "hiddenSections" : {
+    "home": false,
+    "Products": false,
+    "FindProducts": false,
+    "UploadASINs": false,
+    "QuickTour": false,
+    "GeneralConfig": false,
+    "cdiscount": false,
+    "comparator": false,
+    "category-scrape-links": false,
+    "bestbuy": false,
+    "keepa": false,
+    "form2206": false
+  }
+}

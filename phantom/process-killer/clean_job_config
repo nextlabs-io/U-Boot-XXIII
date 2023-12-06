@@ -1,0 +1,5 @@
+path_to_kill puppeteer
+path_to_kill2 chromedriver
+percent_to_kill 90
+minutes_to_kill 30
+

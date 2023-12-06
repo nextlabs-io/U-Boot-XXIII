@@ -1,0 +1,820 @@
+<?php
+/**
+ * @var Laminas\View\Renderer\PhpRenderer $this
+ */
+$showLocale = 1;
+$colspan = $showLocale ? 14 : 13;
+$h = new Parser\Model\Helper\Helper();
+?>
+<div class="">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <form name="action-form" id="action-form" action="<?= $this->url('manager',
+                ['action' => 'list'],
+                true) ?>" method="post">
+                <div class="x_panel">
+                    <div class="x_content products-table">
+                        <div id="datatable-responsive_wrapper"
+                             class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                            <?= $this->paging ?>
+                            <div class="row row-top">
+                                <div class="col-md-12 col-sm-12 col-xs-12 bulc-actions-select">
+                                    <label>Show
+                                        <select name="filter[per-page]" id="per-page"
+                                                aria-controls="datatable-responsive"
+                                                class="form-control input-sm">
+                                            <option value="20"<?= $this->filter['per-page'] == 20 ? " selected=\"selected\"" : "" ?>>
+                                                20
+                                            </option>
+                                            <option value="100"<?= $this->filter['per-page'] == 100 ? " selected=\"selected\"" : "" ?>>
+                                                100
+                                            </option>
+                                            <option value="500"<?= $this->filter['per-page'] == 500 ? " selected=\"selected\"" : "" ?>>
+                                                500
+                                            </option>
+                                            <option value="1000"<?= $this->filter['per-page'] == 1000 ? " selected=\"selected\"" : "" ?>>
+                                                1000
+                                            </option>
+                                        </select> entries</label>
+                                    <a id="select-all" href="#" class="btn btn-default">Select all</a>
+                                    <a id="unselect-all" href="#" class="btn btn-default">Unselect all</a>
+                                    <a href="#" id="select-visible" class="btn btn-default">Select
+                                        visible</a>
+                                    <a href="#" id="unselect-visible" class="btn btn-default">Unselect
+                                        visible</a>
+                                    <label>
+                                        <select name="mass-actions" id="mass-actions"
+                                                aria-controls="datatable-responsive"
+                                                class="form-control input-sm locale">
+                                            <option value="">Choose mass action</option>
+                                            <?php foreach ($this->massActions as $key => $action) : ?>
+                                                <option value="<?= $key; ?>"><?= $action; ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <input type="button" name="mass-action-submit"
+                                               id="mass-action-submit" value="Submit"
+                                               class="btn btn-default locale"/>
+                                    </label>
+                                    <a href="#" id="download-csv" class="btn bg-red-c">Download CSV</a>
+                                    <input type="hidden" name="download_csv" id="download_csv" value=""/>
+
+                                </div>
+                            </div>
+                            <div class="row scroll">
+                                <div class="col-md-12 col-sm-12 col-xs-12 inner-scroll">
+                                    <table
+                                            class="table table-striped jambo_table bulk_action dataTable products"
+                                            role="grid" style="width: 100%;"
+                                            width="100%"
+                                            cellspacing="0">
+                                        <thead>
+                                        <tr role="row">
+                                            <th class="column-title" width="3%" style="width: 3%;"></th>
+                                            <th id="row_id" class="column-title" width="3%"
+                                                style="width: 3%;">Id
+                                            </th>
+                                            <?php if ($showLocale) : ?>
+                                                <th id="row_locale" data-row="locale" class="column-title">Locale</th>
+                                            <?php endif; ?>
+                                            <th id="row_asin" data-row="asin" class="column-title ">ASIN</th>
+                                            <th id="row_parent_asin" data-row="parent_asin" class="column-title ">Parent
+                                                ASIN
+                                            </th>
+                                            <th colspan="2" id="row_title" data-row="title" class="column-title">Name
+                                            </th>
+                                            <th id="row_price" data-row="price" class="column-title">Price</th>
+                                            <th id="row_stock" data-row="stock" class="column-title">Qty</th>
+                                            <th id="row_syncable" data-row="syncable" class="column-title ">Sync
+                                                status
+                                            </th>
+                                            <th id="row_modified" data-row="modified" class="column-title ">Last sync
+                                            </th>
+                                            <th id="row_updated_date" data-row="updated_date" class="column-title ">
+                                                Update
+                                            </th>
+                                            <th class="column-title"></th>
+                                            <th class="column-title">Operations</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <?php if ($showLocale) : ?>
+                                                <td>
+                                                    <select name="filter[locale]" id="locales"
+                                                            class="input-sm form-control padd-top fontsmall"
+                                                            style="width:60px;">
+                                                        <?php foreach ($this->filter['locales'] as $locale) : ?>
+                                                            <option value="<?= $locale['value'] ?>"<?= $locale['selected'] ? " selected=\"selected\"" : "" ?>><?= $locale['value']; ?></option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </td>
+                                            <?php endif; ?>
+
+                                            <!--td>
+                                                <select name="filter[enabled]" id="enable-select"
+                                                        class="input-sm form-control padd-top">
+                                                    <?php foreach ($this->filter['enabledList'] as $item) : ?>
+                                                        <option value="<?= $item['value'] ?>"<?= $item['selected'] ? " selected=\"selected\"" : "" ?>><?= $item['title']; ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </td-->
+                                            <td>
+                                                <input type="text" name="filter[asin]"
+                                                       value="<?= $this->filter['asin'] ?>"
+                                                       class="form-control padd-top" style="width:120px;"/>
+                                            </td>
+                                            <td><input type="text" name="filter[parent_asin]"
+                                                       value="<?= $this->filter['parent_asin'] ?>"
+                                                       class="form-control padd-top" style="width:120px;"/>
+                                            </td>
+                                            <td colspan="2"><input type="text" name="filter[title]"
+                                                                   value="<?= $this->filter['title'] ?>"
+                                                                   class="col-lg-12 form-control padd-top w100"/>
+                                            </td>
+                                            <td width="3%">
+                                                from:<br/><input type="text" name="filter[fromPrice]"
+                                                                 value="<?= $this->filter['fromPrice'] ?>"
+                                                                 class="from-to  fontsmall"/>
+                                                <div class="clearfix"></div>
+                                                to:<br/><input type="text" name="filter[toPrice]"
+                                                               value="<?= $this->filter['toPrice'] ?>"
+                                                               class="from-to  fontsmall"/>
+                                            </td>
+                                            <td width="3%">
+                                                from:<br/><input type="text" name="filter[fromStock]"
+                                                                 value="<?= $this->filter['fromStock'] ?>"
+                                                                 class="from-to fontsmall"/>
+                                                <div class="clearfix"></div>
+                                                to:<br/><input type="text" name="filter[toStock]"
+                                                               value="<?= $this->filter['toStock'] ?>"
+                                                               class="from-to fontsmall"/>
+
+                                            </td>
+                                            <td>
+                                                <select name="filter[syncable]" id="active-select"
+                                                        class="padd-top 	form-control">
+                                                    <?php foreach ($this->filter['activeList'] as $item) : ?>
+                                                        <option value="<?= $item['value'] ?>"<?= $item['selected'] ? " selected=\"selected\"" : "" ?>><?= $item['title']; ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+
+                                            </td>
+                                            <td>
+                                                <div class='input-group date marg-top' id='fromDate'>
+                                                    <input type='text' class="from-to fontsmall" style="width:109px;"
+                                                           name="filter[fromModified]"
+                                                           value="<?= $this->filter['fromModified'] ?>"/>
+                                                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                                                </div>
+                                                <br/>
+                                                <div class='input-group date' id='toDate'>
+                                                    <input type='text' class="from-to fontsmall" style="width:109px;"
+                                                           name="filter[toModified]"
+                                                           value="<?= $this->filter['toModified'] ?>"/>
+                                                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                                                </div>
+                                            </td>
+                                            <td></td>
+                                            <td>
+                                                <input type="submit" value="Filter"
+                                                       class="btn bg-red-c filter padd-top"/><br/>
+                                                <input class="btn btn-default" type="button" value="Reset"
+                                                       onclick="window.location = '<?= $this->url('manager',
+                                                           ['action' => 'list'],
+                                                           ['query' => ['resetFilter' => 1]]) ?>'"/>
+                                            </td>
+
+                                            <td></td>
+                                        </tr>
+
+
+                                        <?php
+                                        $syncableOptions = \Parser\Model\Configuration\ProductSyncable::getOptions();
+                                        if (isset($this->productList) && count($this->productList)) : ?>
+                                            <?php foreach ($this->productList as $odd => $product) : ?>
+                                                <tr role="row" class="<?php echo $odd % 2 ? "odd" : "even"; ?>">
+                                                    <td><input type="checkbox"
+                                                               name="filter[products][<?= $product['product_id'] ?>]"
+                                                               value="1" class="product-checkbox-selector"
+                                                               id="product<?= $product['product_id'] ?>"/></td>
+                                                    <td><?= $product['product_id'] ?></td>
+                                                    <?php if ($showLocale) : ?>
+                                                        <td><?= $product['locale'] ?></td>
+                                                    <?php endif; ?>
+                                                    <!--td><?= $product['enabled'] == 1 ? "Yes" : "No" ?></td-->
+                                                    <td><?= $product['asin'] ?></td>
+                                                    <td><?= $product['parent_asin'] ?></td>
+                                                    <td><?= $h->getFirstImagesFromProduct($product['images'], $product['title']) ?></td>
+                                                    <td class="product-name " width="40%" style="max-width: 40%">
+                                                        <div class="product-name-text"
+                                                             title="">
+                                                            <?= $product['title']?>
+
+                                                        </div>
+                                                    </td>
+                                                    <td><?php if($product['regular_price'] && $product['regular_price'] !== $product['price']) : ?>
+                                                        <strike><?= $product['regular_price'] ?></strike><br />
+                                                        <?php endif; ?>
+                                                        <?= $product['price'] ?></td>
+                                                    <td><?= $product['stock'] ?></td>
+                                                    <td><?= $syncableOptions[$product['syncable']] ?></td>
+                                                    <td>
+                                                        <?php echo date("d/m/y H:i:s",
+                                                            strtotime($product['modified']));//$this->timeAgo->inWords($product['modified']) ?>
+                                                        &nbsp;
+                                                        <small>(<?php echo $product['sync_speed']; ?>)</small>
+                                                    </td>
+                                                    <td><?= $this->timeAgo->inWords($product['updated_date']) ?></td>
+                                                    <td>
+                                                        <a data-toggle="modal"
+                                                           data-target=".product-details-<?= $product['product_id'] ?>"
+                                                           class="btn btn-default"
+                                                           title="Click to view detailed info">Details</a> <br/>
+                                                        <a data-toggle="modal"
+                                                           data-target=".product-custom-details"
+                                                           class="btn btn-default custom-product-data"
+                                                           data-product="<?= $product['product_id'] ?>"
+                                                           title="Click to edit product">Edit</a> <br/>
+                                                        <?php if ($product['productUrl'])  : ?>
+                                                            <a href="<?= ($product['productUrl']) ?>"
+                                                               target="blank" class="btn btn-default"
+                                                               title="Amazon product page"> View on site </a>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td>
+                                                        <a href="javascript:syncProduct('<?= $product['product_id'] ?>')"
+                                                           class="btn btn-default"
+                                                           title="Manual start of synchronization"> Sync </a><br/>
+                                                        <a target="blank"
+                                                           href="/parser/parse?mode=array&locale=<?= $product['locale'] ?>&asin=<?= $product['asin'] ?>"
+                                                           class="btn btn-default"
+                                                           title="Manual start of synchronization and view available Amazon data for this product">
+                                                            Sync page </a>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php else : ?>
+                                            <tr role="row" class="odd">
+                                                <td colspan="<?= $colspan ?>" align="center" style="height:300px">
+                                                    <strong>No products found</strong>
+                                                </td>
+                                            </tr>
+                                        <?php endif; ?>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="popup" id="popup" style="display:none">
+                    <div class="header-popup"><a href="#" id="close-popup-link">Close</a></div>
+                    <div><strong>Comment:</strong>
+                        <input type="text" class="form-control" name="custom_comment"
+                               id="custom_comment"
+                               value=""/>
+                               value=""/>
+                    </div>
+                    <div>
+                        <strong>Set Custom Qty:</strong>
+                        <input type="checkbox" id="set_custom_qty"
+                               name="set_custom_qty"
+                        />
+                        <input type="text" class="form-control-small" name="custom_qty"
+                               id="custom_qty"
+                               value=""/>
+
+                    </div>
+                    <div><strong>
+                            <input type="submit" class="btn btn-info"
+                                   name="custom_product_update" value="change data"/></strong>
+                        <input type="hidden" name="custom_product_id" id="custom_product_id" value=""/>
+                    </div>
+                </div>
+                <input type="hidden" name="filter[page]" id="product-page" value="<?= $this->filter['page'] ?>"/>
+                <input type="hidden" name="product_id" id="product_id" value=""/>
+                <input type="hidden" name="check_all" id="check_all" value=""/>
+                <input type="hidden" name="filter[sort_column]" id="sort_column"
+                       value="<?= $this->filter['sort_column'] ?>"/>
+                <input type="hidden" name="filter[sort_type]" id="sort_type" value="<?= $this->filter['sort_type'] ?>"/>
+                <div class="modal fade bs-example-modal-lg product-mass-update "
+                     tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close"
+                                        data-dismiss="modal"><span
+                                            aria-hidden="true">×</span>
+                                </button>
+                                <h4 class="modal-title">Change products attributes</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="x_panel">
+                                    <div class="x_content">
+
+                                        <?php if (count($storeList)) : ?>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-3 col-sm-3 col-xs-12"
+                                                       data-toggle="tooltip"
+                                                       data-placement="right" title=""
+                                                       data-original-title="Store connections will be rebuilt according to the selected stores if products already in the database.">Choose
+                                                    magento stores
+                                                </label>
+                                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                                    <div id="syncable-select" class="btn-group" data-toggle="buttons">
+                                                        <?php foreach ($storeList as $id => $store) : ?>
+                                                            <label class="btn btn-default"
+                                                                   data-toggle-class="btn-primary"
+                                                                   data-toggle-passive-class="btn-default">
+                                                                <input type="checkbox" name="magentoStore[<?= $id ?>]"
+                                                                       value="<?= $id ?>">
+                                                                &nbsp; <?= $store['title'] ?> &nbsp;
+                                                            </label>
+                                                        <?php endforeach; ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
+
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <hr/>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" data-toggle="tooltip"
+                                               data-placement="right" title=""
+                                               data-original-title="Sync status to be changed according to the selected value if products are already in the database. You can use this function for the bulk sync status change.">Change
+                                            sync status
+
+                                        </label>
+                                        <div class="col-md-9 col-sm-9 col-xs-12">
+                                            <div id="syncable-select" class="btn-group" data-toggle="buttons">
+                                                <?php
+                                                $this->cycle()->assign([
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    '<div class="clearfix"></div><br />',
+                                                ], 'clearfix');
+                                                foreach ($syncableList as $syncableItem => $value) :
+                                                    ?>
+                                                    <label class="btn btn-default"
+                                                           data-toggle-class="btn-primary"
+                                                           data-toggle-passive-class="btn-default">
+                                                        <input type="radio" name="mass_syncable"
+                                                               value="<?= $syncableItem ?>">
+                                                        &nbsp; <?= $value ?> &nbsp;
+                                                    </label>
+                                                    <?= $this->cycle()->setName('clearfix')->next() ?>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <hr/>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Drop all magento
+                                            associations
+                                        </label>
+                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                            <div id="autopaging-select" class="" data-toggle="">
+                                                <label>
+                                                    <input type="checkbox" name="drop-associations" value="1"
+                                                           class="js-switch"/>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <br/>
+                                    <h4 class="modal-title">Mass custom attributes change <input type="checkbox"
+                                                                                                 name="mass_custom_attribute_change_enable"
+                                                                                                 id="mass_custom_attribute_change_enable"
+                                                                                                 value="1"
+                                                                                                 class="js-switch"/>
+                                    </h4>
+                                    <hr/>
+                                    <div id="custom-form-blocker">
+                                        <?php
+                                        unset($flags['custom_images_flag']);
+                                        foreach ($flags as $flag => $flagData) :
+                                            $attribute = str_replace(["custom_", "_flag"], "", $flag); ?>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-4 col-sm-4 col-xs-12"
+                                                       data-toggle="tooltip"
+                                                       data-placement="right" title=""
+                                                       data-original-title=""><input type="checkbox" name="<?= $flag ?>"
+                                                                                     value="1"
+                                                                                     class="js-switch"/>
+                                                    <?= $flagData['title'] ?>
+                                                </label>
+                                                <div class="col-md-8 col-sm-8 col-xs-12">
+                                                    <?php if ($flagData['type'] == 'text') : ?>
+                                                        <input type="text" class="form-control col-md-7 col-xs-12"
+                                                               name="custom_<?= $attribute ?>"
+                                                               value="<?= isset($data['custom_' . $attribute]) ? $data['custom_' . $attribute] : "" ?>">
+                                                    <?php elseif ($flagData['type'] == 'textarea') : ?>
+                                                        <textarea name="custom_<?= $attribute ?>"
+                                                                  class="form-control col-md-7 col-xs-12"><?= isset($data['custom_' . $attribute]) ? $data['custom_' . $attribute] : '' ?></textarea>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                        <?php endforeach; ?>
+
+                                        <hr/>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-12 col-sm-12 col-xs-12"><input
+                                                        type="checkbox"
+                                                        name="custom_images_flag"
+                                                        value="1"
+                                                        class="js-switch"/>
+                                                Images (one image url per line, you can change images order by moving
+                                                urls
+                                                in the
+                                                textarea) </label>
+                                            <div class="clearfix"></div>
+                                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <textarea id="custom_images_tagged_main" name="custom_images" type="text"
+                                                      class="tags form-control col-md-12 col-xs-12"
+                                            ></textarea>
+                                                <div class="clearfix"></div>
+                                                <div class="custom-images-div" id="custom-images-div-main"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" id="btn-mass-update-action">Submit
+                                </button>
+                                <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">Close
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <button type="button" data-target=".product-mass-update" data-toggle="modal" style="display:none"
+                            id="btn-mass-update-trigger">
+                    </button>
+                    <div class="tooltiptext1" style="display: none">
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+        <div class="modal fade bs-example-modal-lg product-custom-details"
+             tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close"
+                                data-dismiss="modal"><span
+                                    aria-hidden="true">×</span>
+                        </button>
+                        <h4 class="modal-title">Customize product details</h4>
+                    </div>
+                    <div id="customProductData">
+                        <div class="modal-body">
+                            <h2>Loading data... Please wait <i class="fa fa-spinner fa-spin"></i></h2>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default"
+                                    data-dismiss="modal">Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tooltiptext1" style="display: none">
+            </div>
+        </div>
+        <?php if (isset($this->productList) && count($this->productList)) : ?>
+            <?php foreach ($this->productList as $odd => $product) : ?>
+                <div class="modal fade bs-example-modal-lg product-details-<?= $product['product_id'] ?>"
+                     tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <button type="button" class="close"
+                                        data-dismiss="modal"><span
+                                            aria-hidden="true">×</span>
+                                </button>
+                                <h4 class="modal-title"><?= $product['title'] ?></h4>
+                            </div>
+                            <div class="modal-body">
+                                <?php if ($product['sync_log']) : ?>
+                                    <div><strong>Sync
+                                            Log:</strong> <?= ($product['sync_log']) ?>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if ($product['sync_message']) : ?>
+                                    <div><strong>Sync
+                                            Message:</strong> <?= ($product['sync_message']) ?>
+                                    </div>
+                                <?php endif; ?>
+                                <div>
+                                    <strong>Prime:</strong> <?= ($product['prime'] ? "Yes" : "No") ?>
+                                </div>
+                                <div>
+                                    <strong>Shipping:</strong> <?= ($product['shipping']) ?>
+                                </div>
+                                <div>
+                                    <strong>Delivery:</strong> <?= ($product['delivery']) ?>
+                                </div>
+                                <div><strong>Stock
+                                        String:</strong> <?= ($product['StockString']) ?>
+                                </div>
+                                <div>
+                                    <strong>Category:</strong> <?= ($product['category']) ?>
+                                </div>
+                                <div>
+                                    <strong>MPN:</strong> <?= ($product['mpn']) ?>
+                                </div>
+                                <?php if (isset($product['variation_attributes_data'])) : ?>
+                                    <div><strong>variation Attributes:</strong>
+                                        <?php foreach ($product['variation_attributes_data'] as $code => $att_value) : ?>
+                                            <p>
+                                                <strong><?= $code ?></strong>: <?= $att_value ?>
+                                            </p>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if ($product['made_by']) : ?>
+                                    <div><strong>Made
+                                            by:</strong> <?= ($product['made_by']) ?>
+                                    </div>
+                                <?php endif; ?>
+                                <div>
+                                    <strong>Weight:</strong> <?= ($product['weight']) ?>
+                                </div>
+                                <div>
+                                    <strong>Dimension:</strong> <?= ($product['dimension']) ?>
+                                </div>
+                                <?php if (isset($product['dimension_data']) && $product['dimension_data']) : ?>
+                                    <div><strong>variation Attributes:</strong>
+                                        <?php
+                                        $variationData = unserialize($product['dimension_data']);
+                                        if (is_array($variationData) && count($variationData)) {
+                                            foreach ($variationData as $code => $att_value) : ?>
+                                                <p>
+                                                    <strong><?= $code ?></strong>: <?= $att_value ?>
+                                                </p>
+                                            <?php endforeach;
+                                        } ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">Close
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tooltiptext1" style="display: none">
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+
+    </div><!-- row -->
+</div><!-- '' -->
+<script>
+    $('#fromDate').datetimepicker({
+        format: 'DD/MM/YY HH:mm'
+    });
+    $('#toDate').datetimepicker({
+        format: 'DD/MM/YY HH:mm'
+    });
+    $('#select-all').click(function (event) {
+        $('.product-checkbox-selector').each(function () {
+
+            this.checked = 'checked';
+        });
+        $('#check_all').val(1);
+    });
+    $('#download-csv').click(function (event) {
+        let selected = false;
+        $('.product-checkbox-selector').each(function () {
+            console.log(this.checked);
+            if(this.checked) selected = true;
+        });
+        if(selected === true) {
+            $("#download_csv").val(1);
+            $("#action-form").attr("target", "_blank");
+            $("#action-form").submit();
+        } else {
+            // do notification
+            new PNotify({
+                title: 'No products selected',
+                text: 'Please choose some products.',
+                styling: 'bootstrap3'
+            });
+        }
+        $("#download_csv").val("");
+        $("#action-form").attr("target", "_self");
+    });
+    $('#unselect-all').click(function (event) {
+        $('.product-checkbox-selector').each(function () {
+            this.checked = '';
+        });
+        $('#check_all').val('');
+    });
+
+    $('#select-visible').click(function (event) {
+        $('.product-checkbox-selector').each(function () {
+            this.checked = 'checked';
+        });
+    });
+    $('#unselect-visible').click(function (event) {
+        $('.product-checkbox-selector').each(function () {
+            this.checked = '';
+        });
+    });
+
+
+    $('#mass-actions').change(function (event) {
+        if ($('#mass-actions').val() == "mass_update") {
+            // load first product image url
+            var implemented = 0;
+            $('.product-checkbox-selector').each(function () {
+                if (this.checked && !implemented) {
+                    // taking first checked product
+                    implemented = 1;
+                    var string = this.id;
+                    string = string.replace('product', '');
+                    if (string) {
+                        var baseUrl = "<?= $this->url('manager', ['action' => 'ajaxproductimageload']) ?>";
+                        $.ajax({
+                            url: baseUrl + "?id=" + string,
+                            cache: false
+                        }).done(function (html) {
+                            $("#custom_images_tagged_main").html(html);
+                            updateImagesDivMain();
+                        });
+
+                    }
+                }
+            });
+            $('#btn-mass-update-trigger').click();
+        }
+
+    });
+
+    $('#mass-action-submit').click(function (event) {
+        $('#action-form').submit();
+    });
+    $('#btn-mass-update-action').click(function (event) {
+        $('#action-form').submit();
+    });
+
+
+    $('#per-page').change(function (event) {
+        $('#action-form').submit();
+    });
+
+    function triggerSort(id) {
+        var ids = ['sortSync', 'sortUpdate', 'sortId'];
+        for (var sortId in ids) {
+            if (ids[sortId] === id) {
+                var current = document.getElementById(ids[sortId]).value;
+                if (current > 0) {
+                    current = 0;
+                } else {
+                    current = 1;
+                }
+                document.getElementById(ids[sortId]).value = current;
+            } else {
+                document.getElementById(ids[sortId]).value = '';
+            }
+        }
+        $('#action-form').submit();
+    }
+
+    function changePage(page) {
+        $('#product-page').val(page);
+        $('#action-form').submit();
+    }
+
+    function syncProduct(id) {
+        $('#product_id').val(id);
+        $('#action-form').submit();
+    }
+
+    function openPopup(id, custom_qty, qty, comment) {
+        $('#popup').show();
+        $('#set_custom_qty').prop('checked', custom_qty ? true : false);
+        $('#custom_comment').val(comment);
+        $('#custom_comment').focus();
+        $('#custom_qty').val(qty);
+        $('#custom_product_id').val(id);
+    }
+
+    $('#close-popup-link').click(function (event) {
+            $('#popup').hide();
+        }
+    );
+
+    $(function () {
+
+        $(".column-title").each(function () {
+            var attributeValue = $(this).attr('data-row');
+            var classValue = "sorting";
+            var currentSortColumn = $('#sort_column').val();
+            var currentSortType = $('#sort_type').val();
+
+            if (attributeValue) {
+                if (attributeValue == currentSortColumn) {
+                    classValue = currentSortType == 'asc' ? 'sorting_asc' : 'sorting_desc';
+                }
+                $(this).addClass(classValue);
+                //console.log(classValue + " " + attributeValue);
+            }
+        });
+    });
+    $(".column-title").click(function (event) {
+        if (event.target.id) {
+            var element = $('#' + event.target.id);
+            var currentSortColumn = $('#sort_column').val();
+            var currentSortType = $('#sort_type').val();
+            var type = 'desc';
+            if (element.attr('data-row') == currentSortColumn) {
+                type = currentSortType == 'asc' ? 'desc' : 'asc';
+                $('#sort_type').val(type);
+            } else {
+                $('#sort_type').val(type);
+                $('#sort_column').val(element.attr('data-row'));
+            }
+            $('#action-form').submit();
+
+        }
+    });
+    $(".custom-product-data").click(function (event) {
+        $("#customProductData").html('<div></div>');
+        var productID = $(this).attr('data-product');
+        if (productID) {
+            var baseUrl = "<?= $this->url('manager', ['action' => 'ajaxproductcustom']) ?>";
+            $.ajax({
+                url: baseUrl + "?id=" + productID,
+                cache: false
+            }).done(function (html) {
+                $("#customProductData").html(html);
+                //console.log($('#custom-product-form-' + productID).find("input[name='custom_images_flag']").is(":checked"));
+                //console.log($('#custom-product-form-' + productID).find("textarea[name='custom_images']").val());
+                if (!$('#custom-product-form-' + productID).find("input[name='custom_images_flag']").is(":checked")
+                    && $('#custom-product-form-' + productID).find("textarea[name='custom_images']").val().trim().length < 1) {
+                    console.log('not checked && empty value');
+                    var value = $('#custom-product-form-' + productID).find("input[name='original_images']").val();
+                    $('#custom-product-form-' + productID).find("textarea[name='custom_images']").val(value);
+                    /* //show single image
+                    var list = value.split('\n');
+                    if (typeof (list[0]) !== 'undefined') {
+                        $('#custom-product-form-' + productID).find("textarea[name='custom_images']").val(list[0]);
+                    }*/
+
+                    $('#custom-product-form-' + productID).find("input[name='custom_images_flag']").prop('checked', true);
+                }
+                if ($(".js-switch-custom")[0]) {
+                    var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch-custom'));
+                    elems.forEach(function (html) {
+                        var switcheryc = new Switchery(html, {
+                            color: '#e62a17'
+                        });
+                    });
+                }
+                updateImagesDiv();
+            });
+        }
+    });
+
+    function updateImagesDivMain() {
+        let list = $('#custom_images_tagged_main').val().split('\n');
+        let string = "";
+        $.each(list, function (index, value) {
+            if (value.indexOf('https://') != -1) {
+                string += "<img src='" + value + "' width='60px' />&nbsp;";
+            }
+        });
+        $('#custom-images-div-main').html(string);
+    }
+
+    $('#custom_images_tagged_main').bind('input propertychange', function () {
+        updateImagesDivMain();
+    });
+</script>

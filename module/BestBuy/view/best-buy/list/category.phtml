@@ -1,0 +1,97 @@
+<?php
+/* @var $form  Parser\Model\Form\SearchForm */
+?>
+
+<?php $form->prepare(); ?>
+<?php echo $this->form()->openTag($form); ?>
+<div class="">
+    <div class="page-title">
+        <div class="title_center">
+            <h3>BestBuy categories</h3>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+<div id="datatable-responsive_wrapper"
+     class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+    <?= $this->paging ?>
+    <div class="row row-top">
+        <div class="col-md-12 col-sm-12 col-xs-12 bulc-actions-select">
+            <label>Show <?= $this->perPageSelect ?> entries</label>
+        </div>
+    </div>
+    <?php if ($this->message) : ?>
+        <div class="alert alert-info alert-dismissible" role="alert"><strong>
+                <?= $this->message ?>
+            </strong></div>
+    <?php endif; ?>
+    <?php if ($this->errors) : ?>
+        <div class="alert alert-danger alert-dismissible" role="alert"><strong>
+                <?= $this->errors ?>
+            </strong></div>
+    <?php endif; ?>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <input class="btn btn-default locale" type="submit" value='refresh selected'
+                   name="refresh-selected"/>
+            <input class="btn btn-default locale" type="submit" value='refresh all' name="refresh-all"/>
+
+            <span style="float:right">
+                    <label for="delete-product-checkbox-top">delete with products <input
+                                id="delete-product-checkbox-top" type="checkbox" name="delete-product" value="1"
+                                class="form-control-small"/> </label>&nbsp;
+                    <input class="btn btn-default locale" type="submit" value='delete selected' name="delete-selected"/>
+                    <input class="btn btn-default locale" type="submit" value='delete all' name="delete-all"/>
+                </span>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+
+            <div class="row scroll">
+
+                <div class="col-md-12 col-sm-12 col-xs-12 inner-scroll">
+                    <?php
+                    echo $this->table;
+                    ?>
+                </div>
+            </div>
+            <!-- x_panel-->
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <input class="btn btn-default locale" type="submit" value='refresh selected'
+                   name="refresh-selected"/>
+            <input class="btn btn-default locale" type="submit" value='refresh all' name="refresh-all"/>
+            <span style="float:right">
+                    <label for="delete-product-checkbox-bot">delete with products <input
+                                id="delete-product-checkbox-bot" type="checkbox" name="delete-product" value="1"
+                                class="form-control-small"/> </label>&nbsp;
+                    <input class="btn btn-default locale" type="submit" value='delete selected' name="delete-selected"/>
+                    <input class="btn btn-default locale" type="submit" value='delete all' name="delete-all"/>
+                </span>
+
+        </div>
+    </div>
+</div>
+
+
+<!--<div class="row scroll">-->
+<!--    <div class="col-md-12 col-sm-12 col-xs-12 inner-scroll">-->
+<!--        --><?php
+//        echo $this->table;
+//        ?>
+<!--    </div>-->
+<!--</div>-->
+<!-- x_panel -->
+</div>
+<?php echo $this->form()->closeTag(); ?>
+
+<!-- col-md-4-->
+
+
+
+

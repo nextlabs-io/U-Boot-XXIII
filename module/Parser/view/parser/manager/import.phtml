@@ -1,0 +1,160 @@
+<?php
+
+/* @var $form  Parser\Model\Form\LoginForm */
+
+?>
+
+<div class="">
+    <div class="page-title">
+        <div class="title_center">
+            <h1>Upload ASINs</h1>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h1>Choose Amazon locale and upload file</h1>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <?php $form->prepare(); ?>
+                    <?php echo $this->form()->openTag($form); ?>
+                    <?php if ($this->message) : ?>
+                        <div class="alert alert-info alert-dismissible" role="alert">
+                            <strong><?= $this->message ?></strong>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($this->errors) : ?>
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                            <strong><?= $this->errors ?></strong>
+                        </div>
+                    <?php endif; ?>
+                    <?php $select = $form->get('locale'); ?>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12"><?php echo $this->formLabel($select); ?>
+                            <span class="required">*</span>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div id="locale-select" class="btn-group" data-toggle="buttons">
+                                <?php unset($locales[key($locales)]);
+                                foreach ($locales as $localeItems) :
+                                    ?>
+                                    <label class="btn btn-default<?php if ($locale == $localeItems) echo ' active'; ?>"
+                                           data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
+                                        <input type="radio" name="locale"
+                                               value="<?= $localeItems ?>"<?php if ($locale == $localeItems) echo ' checked="checked"'; ?>>
+                                        &nbsp; <?= $localeItems ?> &nbsp;
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <?php $select = $form->get('syncable'); ?>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" data-toggle="tooltip"
+                               data-placement="right" title=""
+                               data-original-title="Sync status to be changed according to the selected value if products are already in the database. You can use this function for the bulk sync status change."><?php echo $this->formLabel($select); ?>
+                            <span class="required">*</span>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div id="syncable-select" class="btn-group" data-toggle="buttons">
+                                <?php //unset($syncableList[key($syncableList)]);
+                                foreach ($syncableList as $syncableItem => $value) :
+                                    ?>
+                                    <label class="btn btn-default<?php if ($syncable == $syncableItem) echo ' active'; ?>"
+                                           data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
+                                        <input type="radio" name="syncable"
+                                               value="<?= $syncableItem ?>"<?php if ($syncable == $syncableItem) echo ' checked="checked"'; ?>>
+                                        &nbsp; <?= $value ?> &nbsp;
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <?php if (count($storeList)) : ?>
+                        <div class="form-group">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" data-toggle="tooltip"
+                                   data-placement="right" title=""
+                                   data-original-title="Store connections will be rebuilt according to the selected stores if products already in the database.">Choose
+                                magento stores
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <div id="syncable-select" class="btn-group" data-toggle="buttons">
+                                    <?php foreach ($storeList as $id => $store) : ?>
+                                        <label class="btn btn-default<?php if ($store['selected']) echo ' active'; ?>"
+                                               data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
+                                            <input type="checkbox" name="magentoStore[<?= $id ?>]"
+                                                   value="<?= $id ?>"<?php if ($store['selected']) echo ' checked="checked"'; ?>>
+                                            &nbsp; <?= $store['title'] ?> &nbsp;
+                                        </label>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php $fileElement = $form->get('asins'); ?>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" data-toggle="tooltip"
+                               data-placement="right" title=""
+                               data-original-title="File format per line: ASIN,SKU"><?php echo $this->formLabel($fileElement); ?> <br> Download <a href="<?= $this->url('crawler', ['action' => 'sampleAsinList']) ?>">sample file</a>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <?php echo $this->formFile($fileElement); ?>
+                            <?php if ($this->formElementErrors($fileElement)) : ?>
+                                <ul class="parsley-errors-list filled" id="parsley-id-1">
+                                    <li class="parsley-required"><?= $this->formElementErrors($fileElement) ?></li>
+                                </ul>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <?php $textElement = $form->get('asins_list'); ?>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12"><?php echo $this->formLabel($textElement); ?>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <?php echo $this->formTextarea($textElement); ?>
+                            <?php if ($this->formElementErrors($textElement)) : ?>
+                                <ul class="parsley-errors-list filled" id="parsley-id-2">
+                                    <li class="parsley-required"><?= $this->formElementErrors($textElement) ?></li>
+                                </ul>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <?php
+                    foreach ($form->getElements() as $customElement) {
+                        if ($customElement->getAttribute('data') === 'custom') {
+                            ?>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12"><?php echo $this->formLabel($customElement); ?>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <?php echo $this->formText($customElement); ?>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                    }
+                    ?>
+                    <div class="clearfix"></div>
+                    <div class="ln_solid"></div>
+                    <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                            <button type="submit" class="btn btn-default">Start Upload</button>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                            <p><br>* The price and all attributes will be scraped during the first sync. </p>
+                        </div>
+                    </div>
+                    <?php echo $this->form()->closeTag(); ?>
+                </div><!--x_content-->
+            </div><!-- x_panel -->
+        </div><!-- col-md-12 -->
+    </div><!--  row -->
+</div>

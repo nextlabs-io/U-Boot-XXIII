@@ -1,0 +1,153 @@
+<?php
+
+/* @var $form  Parser\Model\Form\LoginForm */
+/* @var $tokensLeft  string */
+/* @var $apiKeyObfuscated string */
+/* @var $totals  array */
+
+?>
+
+<div class="">
+    <div class="page-title">
+        <div class="title_center">
+            <h3>Upload ASINs</h3> <strong
+                    style="float:right"><?php echo $apiKeyObfuscated. ': '; echo $tokensLeft ? 'api tokens left: ' . $tokensLeft : 'No api tokens left' ?></strong>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h1>Choose Amazon locale and upload file</h1>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <?php $form->prepare(); ?>
+                    <?php echo $this->form()->openTag($form); ?>
+                    <?php if ($this->message) : ?>
+                        <div class="alert alert-info alert-dismissible" role="alert">
+                            <strong><?= $this->message ?></strong>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($this->errors) : ?>
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                            <strong><?= $this->errors ?></strong>
+                        </div>
+                    <?php endif; ?>
+                    <?php $select = $form->get('locale'); ?>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12"><?php echo $this->formLabel($select); ?>
+                            <span class="required">*</span>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div id="locale-select" class="btn-group" data-toggle="buttons">
+                                <?php unset($locales[key($locales)]);
+                                foreach ($locales as $localeItems) :
+                                    ?>
+                                    <label class="btn btn-default<?php if ($locale == $localeItems) echo ' active'; ?>"
+                                           data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
+                                        <input type="radio" name="locale"
+                                               value="<?= $localeItems ?>"<?php if ($locale == $localeItems) echo ' checked="checked"'; ?>>
+                                        &nbsp; <?= $localeItems ?> &nbsp;
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <?php $fileElement = $form->get('asins'); ?>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" data-toggle="tooltip"
+                               data-placement="right" title=""
+                               data-original-title="File format per line: ASIN,SKU"><?php echo $this->formLabel($fileElement); ?>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <?php echo $this->formFile($fileElement); ?>
+                            <?php if ($this->formElementErrors($fileElement)) : ?>
+                                <ul class="parsley-errors-list filled" id="parsley-id-1">
+                                    <li class="parsley-required"><?= $this->formElementErrors($fileElement) ?></li>
+                                </ul>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <?php $textElement = $form->get('asins_list'); ?>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12"><?php echo $this->formLabel($textElement); ?>
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <?php echo $this->formTextarea($textElement); ?>
+                            <?php if ($this->formElementErrors($textElement)) : ?>
+                                <ul class="parsley-errors-list filled" id="parsley-id-2">
+                                    <li class="parsley-required"><?= $this->formElementErrors($textElement) ?></li>
+                                </ul>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <?php
+                    foreach ($form->getElements() as $customElement) {
+                        if ($customElement->getAttribute('data') === 'custom') {
+                            ?>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12"><?php echo $this->formLabel($customElement); ?>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <?php echo $this->formText($customElement); ?>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                    }
+                    ?>
+                    <div class="clearfix"></div>
+                    <div class="ln_solid"></div>
+                    <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                            <button type="submit" class="btn btn-default">Start Upload</button>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+
+                        </div>
+                    </div>
+                    <?php echo $this->form()->closeTag(); ?>
+                </div><!--x_content-->
+            </div><!-- x_panel -->
+        </div><!-- col-md-12 -->
+
+    </div><!--  row -->
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <h3>totals</h3> <span><a href="<?= $this->url('keepa', ['action' => 'refresh']) ?>" class="btn btn-default">refresh not found</a></span>
+                <?php if ($totals && count($totals)) {
+                    $totalQty = 0;
+                    foreach ($totals as $item) {
+                        $totalQty += $item['qty'];
+
+                        if ($item['status'] == \BestBuy\Model\BestBuy\ProductKeepa::STATUS_SUCCESS) {
+                            $status = 'completed';
+                        } else if ($item['status'] == \BestBuy\Model\BestBuy\ProductKeepa::STATUS_NEVER_CHECKED) {
+                            $status = 'not checked';
+                        } else if ($item['status'] == \BestBuy\Model\BestBuy\ProductKeepa::STATUS_NOT_FOUND) {
+                            $status = 'not found';
+                        } else if ($item['status'] == \BestBuy\Model\BestBuy\ProductKeepa::STATUS_CURRENTLY_IN_PROGRESS) {
+                            $status = 'in progress';
+                        } else {
+                            $status = $item['status'];
+                        }
+                        echo "<p>" . $status . " : " . $item['qty'] . "</p>";
+
+                    }
+                    echo "<p><strong>total products :</strong> " . $totalQty . "</p>";
+                }
+                ?>
+
+                <span><a href="<?= $this->url('keepa', ['action' => 'export']) ?>" target="_blank" class="btn btn-default">Export to product keepa data table</a></span>
+            </div>
+
+        </div>
+    </div>
+</div>

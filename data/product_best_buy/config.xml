@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<config>
+    <proxy>
+        <maxRetries>5</maxRetries>
+        <maxProxyRetries>5</maxProxyRetries>
+    </proxy>
+    <processLimiter>
+        <productsQtyPerRun>5</productsQtyPerRun>
+        <activeConnectionsLimit>20</activeConnectionsLimit>
+        <processId>bb_product</processId>
+        <processExpireDelay>600</processExpireDelay>
+    </processLimiter>
+    <settings>
+        <baseUrl></baseUrl>
+        <item_links></item_links>
+        <keepaApi></keepaApi>
+        <keepaProductsToSyncPerCronRun>10</keepaProductsToSyncPerCronRun>
+        <title><![CDATA[.//h1[@itemprop = 'name']]]></title>
+        <description><![CDATA[.//div[@itemprop = 'description']]]></description>
+        <specs><![CDATA[.//div[@id = 'detailsAndSpecs']]]></specs>
+        <json><![CDATA[.//script[contains(., 'window.__INITIAL_STATE__')]]]></json>
+        <totalResults><![CDATA[.//div[contains(@class,'searchResultHeader_2tcah')]//span[contains(@class,'materialOverride_STCNx')]]]></totalResults>
+        <itemListLink><![CDATA[.//div[contains(@itemtype, 'http://schema.org/ItemList')]//div[contains(@class, 'x-productListItem')]//a[contains(@itemprop, 'url')]/@href]]></itemListLink>
+        <itemListTitle><![CDATA[.//div[contains(@itemtype, 'http://schema.org/ItemList')]//div[contains(@class, 'x-productListItem')]//div[@itemprop = 'name']]]></itemListTitle>
+        <itemListPrice><![CDATA[.//div[@itemtype = 'http://schema.org/ItemList']//div[contains(@class, 'x-productListItem')]//meta[@itemprop = 'price']/@content]]></itemListPrice>
+
+        <amazonItem><![CDATA[.//div[@data-component-type = 's-search-result']/@data-asin]]></amazonItem>
+        <amazonItemClass><![CDATA[.//div[@data-component-type = 's-search-result']/@class]]></amazonItemClass>
+
+        <amazonItemSponsoredFlag><![CDATA[.//div[@data-component-type = 's-search-result']//div[@data-component-type = 'sp-sponsored-result']/@data-component-id]]></amazonItemSponsoredFlag>
+    </settings>
+</config>
+

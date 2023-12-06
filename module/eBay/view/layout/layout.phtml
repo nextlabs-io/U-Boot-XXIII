@@ -1,0 +1,150 @@
+<?php
+/**
+ * @var Laminas\View\Renderer\PhpRenderer $this
+ */
+$demo  = $this->asset('demo');
+?>
+<?= $this->doctype() ?>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="ROBOTS" content="NOINDEX"/>
+    <meta name="ROBOTS" content="NOFOLLOW"/>
+    <meta name="ROBOTS" content="NOARCHIVE"/>
+    <meta name="ROBOTS" content="NOSNIPPET"/>
+    <meta name="ROBOTS" content="NOODP "/>
+    <?= $this->headTitle() ?>
+
+    <?= $this->headMeta()
+        ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+        ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+    ?>
+
+    <!-- Le styles -->
+    <?= $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/images/favicon.ico'])
+        ->prependStylesheet($this->basePath('vendors/switchery/dist/switchery.min.css'))
+        ->prependStylesheet($this->basePath('build/css/custom.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/datatables.net-bs/css/dataTables.bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/bootstrap-daterangepicker/daterangepicker.css'))
+        ->prependStylesheet($this->basePath('vendors/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css'))
+        ->prependStylesheet($this->basePath('vendors/jqvmap/dist/jqvmap.min.css'))
+        ->prependStylesheet($this->basePath('vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css'))
+        ->prependStylesheet($this->basePath('vendors/iCheck/skins/flat/green.css'))
+        ->prependStylesheet($this->basePath('vendors/nprogress/nprogress.css'))
+        ->prependStylesheet($this->basePath('vendors/font-awesome/css/font-awesome.min.css'))
+        ->prependStylesheet($this->basePath('vendors/bootstrap/dist/css/bootstrap.min.css'))
+    ?>
+
+    <!-- Scripts -->
+
+    <?php echo $this->headScript()
+
+        ->prependFile($this->basePath('vendors/jquery.tagsinput/src/jquery.tagsinput.js'))
+        ->prependFile($this->basePath('vendors/switchery/dist/switchery.min.js'))
+        ->prependFile($this->basePath('vendors/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js'))
+        ->prependFile($this->basePath('vendors/echarts/map/js/world.js'))
+        ->prependFile($this->basePath('vendors/echarts/dist/echarts.min.js'))
+        ->prependFile($this->basePath('vendors/morris.js/morris.min.js'))
+        ->prependFile($this->basePath('vendors/raphael/raphael.min.js'))
+        ->prependFile($this->basePath('vendors/moment/min/moment.min.js'))
+        ->prependFile($this->basePath('vendors/jqvmap/examples/js/jquery.vmap.sampledata.js'))
+        ->prependFile($this->basePath('vendors/jqvmap/dist/maps/jquery.vmap.world.js'))
+        ->prependFile($this->basePath('vendors/jqvmap/dist/jquery.vmap.js'))
+        ->prependFile($this->basePath('vendors/DateJS/build/date.js'))
+        ->prependFile($this->basePath('vendors/flot.curvedlines/curvedLines.js'))
+        ->prependFile($this->basePath('vendors/flot-spline/js/jquery.flot.spline.min.js'))
+        ->prependFile($this->basePath('vendors/flot.orderbars/js/jquery.flot.orderBars.js'))
+        ->prependFile($this->basePath('vendors/Flot/jquery.flot.resize.js'))
+        ->prependFile($this->basePath('vendors/Flot/jquery.flot.stack.js'))
+        ->prependFile($this->basePath('vendors/Flot/jquery.flot.time.js'))
+        ->prependFile($this->basePath('vendors/Flot/jquery.flot.pie.js'))
+        ->prependFile($this->basePath('vendors/Flot/jquery.flot.js'))
+        ->prependFile($this->basePath('vendors/skycons/skycons.js'))
+        ->prependFile($this->basePath('vendors/iCheck/icheck.min.js'))
+        ->prependFile($this->basePath('vendors/bootstrap-progressbar/bootstrap-progressbar.min.js'))
+        ->prependFile($this->basePath('vendors/gauge.js/dist/gauge.min.js'))
+        ->prependFile($this->basePath('vendors/Chart.js/dist/Chart.min.js'))
+        ->prependFile($this->basePath('vendors/nprogress/nprogress.js'))
+        ->prependFile($this->basePath('vendors/fastclick/lib/fastclick.js'))
+        ->prependFile($this->basePath('vendors/bootstrap-daterangepicker/daterangepicker.js'))
+        ->prependFile($this->basePath('vendors/bootstrap/dist/js/bootstrap.min.js'))
+        ->prependFile($this->basePath('vendors/jquery/dist/jquery.min.js'));
+
+    ?>
+
+    <!--Start of Zendesk Chat Script-->
+    <script type="text/javascript">
+        window.$zopim||(function(d,s){var z=$zopim=function(c){z._.push(c)},$=z.s=
+            d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set.
+        _.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute("charset","utf-8");
+            $.src="https://v2.zopim.com/?cxoghEftCXdOwHIKNOuowwOCpyk0VK64";z.t=+new Date;$.
+                type="text/javascript";e.parentNode.insertBefore($,e)})(document,"script");
+    </script>
+    <!--End of Zendesk Chat Script-->
+</head>
+
+<body class="nav-sm">
+<div class="container body">
+    <div class="main_container">
+        <div class="col-md-3 left_col">
+            <div class="left_col scroll-view">
+
+
+                <!-- sidebar menu -->
+                <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                    <?= $this->sidebar ?>
+                </div>
+                <!-- /sidebar menu -->
+
+                <!-- /menu footer buttons -->
+                <div class="sidebar-footer hidden-small">
+                    <a data-toggle="tooltip" data-placement="top" title="Settings"
+                       href="<?= $this->url('profile', ['action' => 'edit']) ?>">
+                        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                    </a>
+                    <!--a data-toggle="tooltip" data-placement="top" title="FullScreen">
+                        <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+                    </a>
+                    <a data-toggle="tooltip" data-placement="top" title="Lock">
+                        <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+                    </a-->
+                    <a data-toggle="tooltip" data-placement="top" title="Logout"
+                       href="<?= $this->url('profile', ['action' => 'logout']) ?>">
+                        <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+                    </a>
+                </div>
+                <!-- /menu footer buttons -->
+            </div>
+        </div>
+
+        <!-- top navigation -->
+        <div class="top_nav">
+            <?= $this->topnav ?>
+        </div>
+        <!-- /top navigation -->
+        <!-- page content -->
+        <div class="right_col" role="main">
+            <?= $this->content ?>
+        </div>
+        <!-- /page content -->
+
+        <!-- footer content -->
+        <footer>
+            <p style="float: left">&copy; <?= date('Y') == 2017 ? "" : "2017 - " ?> <?= date('Y') ?> <a href="https://web-experiment.info">Web-Experiment.info</a></p>
+            
+            <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+    </div>
+</div>
+<?= $this->inlineScript()->appendFile('/build/js/custom.min.js') ?>
+
+</body>
+</html>
